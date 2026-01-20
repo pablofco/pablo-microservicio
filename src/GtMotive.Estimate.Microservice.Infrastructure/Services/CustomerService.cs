@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
 using GtMotive.Estimate.Microservice.ApplicationCore.Services;
 using GtMotive.Estimate.Microservice.Domain.Models;
+using GtMotive.Estimate.Microservice.Infrastructure.Repositories;
 
 namespace GtMotive.Estimate.Microservice.Infrastructure.Services
 {
