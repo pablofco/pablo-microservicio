@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
-namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Repositories
 {
     /// <summary>
     /// Interface IParameterRepository.
