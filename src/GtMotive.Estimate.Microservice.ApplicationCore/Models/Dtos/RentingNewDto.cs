@@ -1,0 +1,37 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos
+{
+    /// <summary>
+    /// RentingDtoNew Model.
+    /// </summary>
+    public class RentingNewDto
+    {
+        /// <summary>
+        /// Gets or sets RentingId.
+        /// </summary>
+        [Key]
+        public int RentingId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the DateStart of the renting.
+        /// </summary>
+        public DateTime DateStart { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the DateEnd of the renting.
+        /// </summary>
+        public DateTime DateEnd { get; set; }
+
+        /// <summary>
+        /// Gets or sets the CustomerId.
+        /// </summary>
+        public int CustomerId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the VehicleId.
+        /// </summary>
+        public int VehicleId { get; set; }
+    }
+}
