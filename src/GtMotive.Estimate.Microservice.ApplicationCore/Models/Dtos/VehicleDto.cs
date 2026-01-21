@@ -28,7 +28,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos
         /// <summary>
         /// Gets or sets the ports of the vehicle.
         /// </summary>
-        public Ports Ports { get; set; }
+        public Domain.Enums.Ports Ports { get; set; }
 
         /// <summary>
         /// Gets or sets the date of adquisition of the vehicle.

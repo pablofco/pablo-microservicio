@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Services;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,13 +9,13 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class RentingsController(IRentingService rentingService,
-        ICustomerService customerService,
-        IVehicleService vehicleService) : ControllerBase
+    public sealed class RentingsController(IRentingMapperPort rentingService,
+        ICustomerMapperPort customerService,
+        IVehicleMapperPort vehicleService) : ControllerBase
     {
-        private readonly IRentingService _rentingService = rentingService;
-        private readonly ICustomerService _customerService = customerService;
-        private readonly IVehicleService _vehicleService = vehicleService;
+        private readonly IRentingMapperPort _rentingService = rentingService;
+        private readonly ICustomerMapperPort _customerService = customerService;
+        private readonly IVehicleMapperPort _vehicleService = vehicleService;
 
         /// <summary>
         /// Get the list of all rentings.

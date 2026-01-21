@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Services;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +9,9 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class VehiclesController(IVehicleService vehicleService) : ControllerBase
+    public sealed class VehiclesController(IVehicleMapperPort vehicleService) : ControllerBase
     {
-        private readonly IVehicleService _vehicleService = vehicleService;
+        private readonly IVehicleMapperPort _vehicleService = vehicleService;
 
         /// <summary>
         /// Get the list of all Vehicles.

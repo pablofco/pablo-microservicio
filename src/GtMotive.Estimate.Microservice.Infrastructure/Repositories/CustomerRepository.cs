@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Models;
 using GtMotive.Estimate.Microservice.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
     /// <summary>
     /// CustomerRepository.
     /// </summary>
-    public class CustomerRepository(HexagonalDbContext rentingDbContext) : ICustomerRepository
+    public class CustomerRepository(HexagonalDbContext rentingDbContext) : ICustomerRepositoryPort
     {
         private readonly HexagonalDbContext _rentingDbContext = rentingDbContext;
 

@@ -4,28 +4,29 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
-using GtMotive.Estimate.Microservice.ApplicationCore.Services;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Models;
+using GtMotive.Estimate.Microservice.Infrastructure.Helpers;
 
-namespace GtMotive.Estimate.Microservice.Infrastructure.Services
+namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
 {
     /// <summary>
     /// RentingService.
     /// </summary>
-    public class RentingService(IParameterRepository parameterRepository,
-        IRentingRepository rentingRepository,
-        IMapper mapper) : IRentingService
+    public class RentingMapper(IParameterRepositoryPort parameterRepository,
+        IRentingRepositoryPort rentingRepository,
+        IMapper mapper) : IRentingMapperPort
     {
-        private readonly IParameterRepository _parameterRepository = parameterRepository;
-        private readonly IRentingRepository _rentingRepository = rentingRepository;
+        private readonly IParameterRepositoryPort _parameterRepository = parameterRepository;
+        private readonly IRentingRepositoryPort _rentingRepository = rentingRepository;
         private readonly IMapper _mapper = mapper;
 
         /// <inheritdoc/>
         public async Task<List<RentingCustomerVehicleDto>> GetRentingsAllAsync()
         {
             var rentings = await _rentingRepository.GetRentingsAllAsync();
-            var rentingsDto = ServiceHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
+            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
         }
@@ -34,7 +35,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<RentingCustomerVehicleDto> GetRentingByIdAsync(int rentingId)
         {
             var renting = await _rentingRepository.GetRentingByIdAsync(rentingId);
-            var rentingDto = ServiceHelper.ConvertToDto<Renting, RentingCustomerVehicleDto>(_mapper, renting);
+            var rentingDto = AdapterHelper.ConvertToDto<Renting, RentingCustomerVehicleDto>(_mapper, renting);
 
             return rentingDto;
         }
@@ -42,7 +43,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         /// <inheritdoc/>
         public RentingDto ConvertDtoToRenting(RentingNewDto rentingNewDto)
         {
-            var rentingDto = ServiceHelper.ConvertToEntity<RentingNewDto, RentingDto>(_mapper, rentingNewDto);
+            var rentingDto = AdapterHelper.ConvertToEntity<RentingNewDto, RentingDto>(_mapper, rentingNewDto);
 
             return rentingDto;
         }
@@ -51,7 +52,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<List<RentingCustomerVehicleDto>> GetStillAliveAsync()
         {
             var rentings = await _rentingRepository.GetRentingsStillAliveAsync();
-            var rentingsDto = ServiceHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
+            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
         }
@@ -60,7 +61,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<List<RentingCustomerVehicleDto>> GetRentingStillAliveByCustomerIdAsync(int customerId)
         {
             var rentings = await _rentingRepository.GetRentingStillAliveByCustomerIdAsync(customerId);
-            var rentingsDto = ServiceHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
+            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
         }
@@ -69,7 +70,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<List<RentingCustomerVehicleDto>> GetRentingByVehicleIdAsync(int vehicleId)
         {
             var rentings = await _rentingRepository.GetRentingByVehicleIdAsync(vehicleId);
-            var rentingsDto = ServiceHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
+            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
         }
@@ -78,7 +79,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<List<RentingCustomerVehicleDto>> GetRentingsVehicleActiveAsync()
         {
             var rentings = await _rentingRepository.GetRentingsVehicleActiveAsync();
-            var rentingsDto = ServiceHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
+            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
         }
@@ -87,7 +88,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<List<RentingCustomerVehicleDto>> GetRentingsVehicleNoActiveAsync()
         {
             var rentings = await _rentingRepository.GetRentingsVehicleNoActiveAsync();
-            var rentingsDto = ServiceHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
+            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
         }
@@ -96,7 +97,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<List<RentingCustomerVehicleDto>> GetRentingsDatesBetweenAsync(DateTime dateBetween)
         {
             var rentings = await _rentingRepository.GetRentingsDatesBetweenAsync(dateBetween);
-            var rentingsDto = ServiceHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
+            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
         }
@@ -105,7 +106,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<List<RentingCustomerVehicleDto>> GetRentingsByCustomerIdDatesBetweenAsync(int customerId, DateTime dateBetween)
         {
             var rentings = await _rentingRepository.GetRentingsByCustomerIdDatesBetweenAsync(customerId, dateBetween);
-            var rentingsDto = ServiceHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
+            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
         }
@@ -113,9 +114,9 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         /// <inheritdoc/>
         public async Task<RentingDto> AddRentingAsync(RentingDto rentingDto)
         {
-            var renting = ServiceHelper.ConvertToEntity<RentingDto, Renting>(_mapper, rentingDto);
+            var renting = AdapterHelper.ConvertToEntity<RentingDto, Renting>(_mapper, rentingDto);
             renting = await _rentingRepository.AddRentingAsync(renting);
-            var rentingDtoAdded = ServiceHelper.ConvertToDto<Renting, RentingDto>(_mapper, renting);
+            var rentingDtoAdded = AdapterHelper.ConvertToDto<Renting, RentingDto>(_mapper, renting);
 
             return rentingDtoAdded;
         }
@@ -123,9 +124,9 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         /// <inheritdoc/>
         public async Task<RentingDto> UpdateRentingAsync(RentingDto rentingDto)
         {
-            var renting = ServiceHelper.ConvertToEntity<RentingDto, Renting>(_mapper, rentingDto);
+            var renting = AdapterHelper.ConvertToEntity<RentingDto, Renting>(_mapper, rentingDto);
             renting = await _rentingRepository.UpdateRentingAsync(renting);
-            var rentingDtoUpdated = ServiceHelper.ConvertToDto<Renting, RentingDto>(_mapper, renting);
+            var rentingDtoUpdated = AdapterHelper.ConvertToDto<Renting, RentingDto>(_mapper, renting);
 
             return rentingDtoUpdated;
         }
@@ -137,9 +138,9 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
             rentingDto.DateEndReal = dateEnd;
             rentingDto.PriceReal = await GetPrice(rentingDto.DateStart, dateEnd);
 
-            var renting = ServiceHelper.ConvertToEntity<RentingCustomerVehicleDto, Renting>(_mapper, rentingDto);
+            var renting = AdapterHelper.ConvertToEntity<RentingCustomerVehicleDto, Renting>(_mapper, rentingDto);
             renting = await _rentingRepository.UpdateRentingAsync(renting);
-            var rentingDtoUpdated = ServiceHelper.ConvertToDto<Renting, RentingCustomerVehicleDto>(_mapper, renting);
+            var rentingDtoUpdated = AdapterHelper.ConvertToDto<Renting, RentingCustomerVehicleDto>(_mapper, renting);
 
             return rentingDtoUpdated;
         }

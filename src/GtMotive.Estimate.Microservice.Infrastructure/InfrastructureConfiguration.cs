@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
-using GtMotive.Estimate.Microservice.ApplicationCore.Services;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Interfaces;
+using GtMotive.Estimate.Microservice.Infrastructure.Adapters;
 using GtMotive.Estimate.Microservice.Infrastructure.Interfaces;
 using GtMotive.Estimate.Microservice.Infrastructure.Logging;
 using GtMotive.Estimate.Microservice.Infrastructure.Repositories;
-using GtMotive.Estimate.Microservice.Infrastructure.Services;
 using GtMotive.Estimate.Microservice.Infrastructure.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,14 +22,14 @@ namespace GtMotive.Estimate.Microservice.Infrastructure
             bool isDevelopment)
         {
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
-            services.AddScoped<IVehicleRepository, VehicleRepository>();
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
-            services.AddScoped<IRentingRepository, RetingRepository>();
-            services.AddScoped<IParameterRepository, ParameterRepository>();
-            services.AddScoped<IVehicleService, VehicleService>();
-            services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<IRentingService, RentingService>();
-            services.AddScoped<IParameterService, ParameterService>();
+            services.AddScoped<IVehicleRepositoryPort, VehicleRepository>();
+            services.AddScoped<ICustomerRepositoryPort, CustomerRepository>();
+            services.AddScoped<IRentingRepositoryPort, RetingRepository>();
+            services.AddScoped<IParameterRepositoryPort, ParameterRepository>();
+            services.AddScoped<IVehicleMapperPort, VehicleMapper>();
+            services.AddScoped<ICustomerMapperPort, CustomerMapper>();
+            services.AddScoped<IRentingMapperPort, RentingMapper>();
+            services.AddScoped<IParameterMapperPort, ParameterMapper>();
 
             if (!isDevelopment)
             {

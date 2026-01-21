@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Services;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,9 +13,9 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
     /// <param name="customerService">customerService.</param>
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class CustomersController(ICustomerService customerService) : ControllerBase
+    public sealed class CustomersController(ICustomerMapperPort customerService) : ControllerBase
     {
-        private readonly ICustomerService _customerService = customerService;
+        private readonly ICustomerMapperPort _customerService = customerService;
 
         /// <summary>
         /// Get the list of all Customers.

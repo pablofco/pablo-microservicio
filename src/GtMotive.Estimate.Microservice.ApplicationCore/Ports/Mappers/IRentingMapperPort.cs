@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Services
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
 {
     /// <summary>
     /// Interface IRentingService.
     /// </summary>
-    public interface IRentingService
+    public interface IRentingMapperPort
     {
         /// <summary>
         /// Get the list of all rentings <see cref="Renting"/>.

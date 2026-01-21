@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Repositories
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories
 {
     /// <summary>
     /// Interface IRentingRepository.
     /// </summary>
-    public interface IRentingRepository
+    public interface IRentingRepositoryPort
     {
         /// <summary>
         /// Get the list of all rentings <see cref="Renting"/>.

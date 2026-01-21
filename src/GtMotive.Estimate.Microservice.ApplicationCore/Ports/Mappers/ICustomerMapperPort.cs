@@ -1,71 +1,72 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Repositories
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
 {
     /// <summary>
-    /// Interface ICustomerRepository.
+    /// Interface ICustomerService.
     /// </summary>
-    public interface ICustomerRepository
+    public interface ICustomerMapperPort
     {
         /// <summary>
         /// Get the list of all Customers <see cref="Customer"/>.
         /// </summary>
         /// <returns>list of Customer.</returns>
-        Task<List<Customer>> GetCustomersAllAsync();
+        Task<List<CustomerDto>> GetCustomersAllAsync();
 
         /// <summary>
         /// Get one Customer <see cref="Customer"/>.
         /// </summary>
         /// <param name="customerId">The unique identifier of the customer to be deleted.</param>
         /// <returns>Customer.</returns>
-        Task<Customer> GetCustomerByIdAsync(int customerId);
+        Task<CustomerDto> GetCustomerByIdAsync(int customerId);
 
         /// <summary>
         /// Get one Customer per Document <see cref="Customer"/>.
         /// </summary>
         /// <param name="document">document of customer.</param>
         /// <returns>Customer.</returns>
-        Task<Customer> GetCustomerByDocumentAsync(string document);
+        Task<CustomerDto> GetCustomerByDocumentAsync(string document);
 
         /// <summary>
         /// Get the list of Cutomers that have rentings <see cref="Customer"/>.
         /// </summary>
         /// <returns>list of Customer.</returns>
-        Task<List<Customer>> GetCustomersWithRentingsAsync();
+        Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAsync();
 
         /// <summary>
         /// Get the list of Customers that have rentings and vehicle is still active in the fleet <see cref="Customer"/>.
         /// </summary>
         /// <returns>list of Customer.</returns>
-        Task<List<Customer>> GetCustomersWithRentingsAndVehicleActive();
+        Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleActiveAsync();
 
         /// <summary>
         /// Get the list of Customers that have rentings and vehicle is not active in the fleet <see cref="Customer"/>.
         /// </summary>
         /// <returns>list of Customer.</returns>
-        Task<List<Customer>> GetCustomersWithRentingsAndVehicleNoActiveAsync();
+        Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleNoActiveAsync();
 
         /// <summary>
         /// Get the list of Customers that have rentings and vehicle is not return yet <see cref="Customer"/>.
         /// </summary>
         /// <returns>list of Customer.</returns>
-        Task<List<Customer>> GetCustomersWithRentingsAndVehicleNoReturnYet();
+        Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleNoReturnYetAsync();
 
         /// <summary>
         /// Add Customer <see cref="Customer"/>.
         /// </summary>
-        /// <param name="customer">The unique identifier of the customer to be deleted.</param>
+        /// <param name="customerDto">The unique identifier of the customer to be deleted.</param>
         /// <returns>Customer.</returns>
-        Task<Customer> AddCustomerAsync(Customer customer);
+        Task<CustomerDto> AddCustomerAsync(CustomerDto customerDto);
 
         /// <summary>
         /// Update Customer <see cref="Customer"/>.
         /// </summary>
-        /// <param name="customer">The unique identifier of the customer to be deleted.</param>
+        /// <param name="customerDto">The unique identifier of the customer to be deleted.</param>
         /// <returns>Customer.</returns>
-        Task<Customer> UpdateCustomerAsync(Customer customer);
+        Task<CustomerDto> UpdateCustomerAsync(CustomerDto customerDto);
 
         /// <summary>
         /// Delete Customer <see cref="Customer"/>.
@@ -73,5 +74,12 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Repositories
         /// <param name="customerId">The unique identifier of the customer to be deleted.</param>
         /// <returns>task.</returns>
         Task DeleteCustomerAsync(int customerId);
+
+        /// <summary>
+        /// ValidateDocumentType.
+        /// </summary>
+        /// <param name="customerDto">customerDto.</param>
+        /// <returns>true or false if exist  documentType.</returns>
+        bool ValidateDocumentType(CustomerDto customerDto);
     }
 }

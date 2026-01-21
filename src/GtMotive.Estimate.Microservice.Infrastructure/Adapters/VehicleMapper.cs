@@ -2,26 +2,27 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
-using GtMotive.Estimate.Microservice.ApplicationCore.Services;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Models;
+using GtMotive.Estimate.Microservice.Infrastructure.Helpers;
 
-namespace GtMotive.Estimate.Microservice.Infrastructure.Services
+namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
 {
     /// <summary>
     /// VehicleService.
     /// </summary>
-    public class VehicleService(IVehicleRepository vehicleRepository,
-        IMapper mapper) : IVehicleService
+    public class VehicleMapper(IVehicleRepositoryPort vehicleRepository,
+        IMapper mapper) : IVehicleMapperPort
     {
-        private readonly IVehicleRepository _vehicleRepository = vehicleRepository;
+        private readonly IVehicleRepositoryPort _vehicleRepository = vehicleRepository;
         private readonly IMapper _mapper = mapper;
 
         /// <inheritdoc/>
         public async Task<List<VehicleDto>> GetVehiclesAllAsync()
         {
             var vehicles = await _vehicleRepository.GetVehiclesAllAsync();
-            var vehiclesDto = ServiceHelper.ConvertToList<Vehicle, VehicleDto>(_mapper, vehicles);
+            var vehiclesDto = AdapterHelper.ConvertToList<Vehicle, VehicleDto>(_mapper, vehicles);
 
             return (List<VehicleDto>)vehiclesDto;
         }
@@ -30,7 +31,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<VehicleDto> GetVehicleByIdAsync(int vehicleId)
         {
             var vehicle = await _vehicleRepository.GetVehicleByIdAsync(vehicleId);
-            var vehicleDto = ServiceHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
+            var vehicleDto = AdapterHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
 
             return vehicleDto;
         }
@@ -39,7 +40,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<VehicleDto> GetVehicleByNumberIdAsync(string numberId)
         {
             var vehicle = await _vehicleRepository.GetVehicleByNumberIdAsync(numberId);
-            var vehicleDto = ServiceHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
+            var vehicleDto = AdapterHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
 
             return vehicleDto;
         }
@@ -47,9 +48,9 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         /// <inheritdoc/>
         public async Task<VehicleDto> AddVehicleAsync(VehicleDto vehicleDto)
         {
-            var vehicle = ServiceHelper.ConvertToEntity<VehicleDto, Vehicle>(_mapper, vehicleDto);
+            var vehicle = AdapterHelper.ConvertToEntity<VehicleDto, Vehicle>(_mapper, vehicleDto);
             vehicle = await _vehicleRepository.AddVehicleAsync(vehicle);
-            var vehicleDtoAdded = ServiceHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
+            var vehicleDtoAdded = AdapterHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
 
             return vehicleDtoAdded;
         }
@@ -57,9 +58,9 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         /// <inheritdoc/>
         public async Task<VehicleDto> UpdateVehicleAsync(VehicleDto vehicleDto)
         {
-            var vehicle = ServiceHelper.ConvertToEntity<VehicleDto, Vehicle>(_mapper, vehicleDto);
+            var vehicle = AdapterHelper.ConvertToEntity<VehicleDto, Vehicle>(_mapper, vehicleDto);
             vehicle = await _vehicleRepository.UpdateVehicleAsync(vehicle);
-            var vehicleDtoUpdated = ServiceHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
+            var vehicleDtoUpdated = AdapterHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
 
             return vehicleDtoUpdated;
         }
@@ -67,7 +68,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         /// <inheritdoc/>
         public async Task UpdateVehiclesAsync(IList<VehicleDto> vehiclesDto)
         {
-            var vehicles = ServiceHelper.ConvertToList<VehicleDto, Vehicle>(_mapper, vehiclesDto);
+            var vehicles = AdapterHelper.ConvertToList<VehicleDto, Vehicle>(_mapper, vehiclesDto);
             await _vehicleRepository.UpdateVehiclesAsync(vehicles);
         }
 
@@ -75,7 +76,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<VehicleDto> UpdateVehicleByIdToActiveAsync(int vehicleId)
         {
             var vehicle = await _vehicleRepository.UpdateVehicleByIdToActiveAsync(vehicleId);
-            var vehicleDtoUpdated = ServiceHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
+            var vehicleDtoUpdated = AdapterHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
 
             return vehicleDtoUpdated;
         }
@@ -84,7 +85,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         public async Task<List<VehicleDto>> UpdateVehiclesToNoActiveAsync()
         {
             var vehicles = await _vehicleRepository.UpdateVehiclesToNoActiveAsync();
-            var vehiclesDto = ServiceHelper.ConvertToList<Vehicle, VehicleDto>(_mapper, vehicles);
+            var vehiclesDto = AdapterHelper.ConvertToList<Vehicle, VehicleDto>(_mapper, vehicles);
 
             return (List<VehicleDto>)vehiclesDto;
         }
@@ -98,13 +99,13 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Services
         /// <inheritdoc/>
         public bool ValidateColor(VehicleDto vehicleDto)
         {
-            return ServiceHelper.ValidateColor(vehicleDto);
+            return AdapterHelper.ValidateColor(vehicleDto);
         }
 
         /// <inheritdoc/>
         public bool ValidatePort(VehicleDto vehicleDto)
         {
-            return ServiceHelper.ValidatePort(vehicleDto);
+            return AdapterHelper.ValidatePort(vehicleDto);
         }
     }
 }

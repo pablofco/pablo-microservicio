@@ -5,9 +5,9 @@ using AutoMapper;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.Domain.Enums;
 
-namespace GtMotive.Estimate.Microservice.Infrastructure.Services
+namespace GtMotive.Estimate.Microservice.Infrastructure.Helpers
 {
-    public static class ServiceHelper
+    public static class AdapterHelper
     {
         /// <summary>
         /// Convert List Entity/Dto to List Dto/Entity.

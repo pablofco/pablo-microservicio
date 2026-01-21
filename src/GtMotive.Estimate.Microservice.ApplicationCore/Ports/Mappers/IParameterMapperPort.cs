@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Services
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
 {
     /// <summary>
     /// Interface IParameterService.
     /// </summary>
-    public interface IParameterService
+    public interface IParameterMapperPort
     {
         /// <summary>
         /// GetParametersAsync.

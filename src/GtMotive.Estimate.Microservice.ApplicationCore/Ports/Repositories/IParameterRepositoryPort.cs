@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Repositories
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories
 {
     /// <summary>
     /// Interface IParameterRepository.
     /// </summary>
-    public interface IParameterRepository
+    public interface IParameterRepositoryPort
     {
         /// <summary>
         /// Get the list of all parameters <see cref="Customer"/>.

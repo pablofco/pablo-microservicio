@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Models;
 using GtMotive.Estimate.Microservice.Infrastructure.Database;
 using GtMotive.Estimate.Microservice.Infrastructure.Repositories;
@@ -46,7 +46,7 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Repositories
 
                     fixture.Inject(context);
 
-                    var parameterRepositoryMock = fixture.Freeze<Mock<IParameterRepository>>();
+                    var parameterRepositoryMock = fixture.Freeze<Mock<IParameterRepositoryPort>>();
                     fixture.Inject(parameterRepositoryMock);
 
                     var repository = fixture.Build<VehicleRepository>().OmitAutoProperties().Create();

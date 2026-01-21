@@ -1,68 +1,67 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Services
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories
 {
     /// <summary>
-    /// Interface IVehicleService.
+    /// Interface IVehicleRepositoryPort.
     /// </summary>
-    public interface IVehicleService
+    public interface IVehicleRepositoryPort
     {
         /// <summary>
         /// Get the list of all Vehicles./>.
         /// </summary>
         /// <returns>lisr of Vehicles.</returns>
-        Task<List<VehicleDto>> GetVehiclesAllAsync();
+        Task<List<Vehicle>> GetVehiclesAllAsync();
 
         /// <summary>
         /// Get one Vehicle.
         /// </summary>
         /// <param name="vehicleId">id of Vehicle.</param>
         /// <returns>Vehicle.</returns>
-        Task<VehicleDto> GetVehicleByIdAsync(int vehicleId);
+        Task<Vehicle> GetVehicleByIdAsync(int vehicleId);
 
         /// <summary>
         /// Get one Vehicle per number (placa)./>.
         /// </summary>
         /// <param name="numberId">The unique identifier of the vehicle (placa).</param>
         /// <returns>Vehicle.</returns>
-        Task<VehicleDto> GetVehicleByNumberIdAsync(string numberId);
+        Task<Vehicle> GetVehicleByNumberIdAsync(string numberId);
 
         /// <summary>
         /// Add Vehicle <see cref="Vehicle"/>.
         /// </summary>
-        /// <param name="vehicleDto">The unique identifier of the vehicle to be deleted.</param>
+        /// <param name="vehicle">The unique identifier of the vehicle to be deleted.</param>
         /// <returns>Vehicle.</returns>
-        Task<VehicleDto> AddVehicleAsync(VehicleDto vehicleDto);
+        Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
 
         /// <summary>
         /// Update Vehicle <see cref="Vehicle"/>.
         /// </summary>
-        /// <param name="vehicleDto">The unique identifier of the vehicle to be deleted.</param>
+        /// <param name="vehicle">The unique identifier of the vehicle to be deleted.</param>
         /// <returns>Vehicle.</returns>
-        Task<VehicleDto> UpdateVehicleAsync(VehicleDto vehicleDto);
+        Task<Vehicle> UpdateVehicleAsync(Vehicle vehicle);
 
         /// <summary>
         /// Update Vehicles <see cref="Vehicle"/>.
         /// </summary>
-        /// <param name="vehiclesDto">The unique identifier of the vehicle to be deleted.</param>
+        /// <param name="vehicles">The unique identifier of the vehicle to be deleted.</param>
         /// <returns>task.</returns>
-        Task UpdateVehiclesAsync(IList<VehicleDto> vehiclesDto);
+        Task UpdateVehiclesAsync(IList<Vehicle> vehicles);
 
         /// <summary>
         /// Update Vehicle to Active in the fleet. <see cref="Vehicle"/>.
         /// </summary>
         /// <param name="vehicleId">The unique identifier of the vehicle to be deleted.</param>
-        /// <returns>task.</returns>
-        Task<VehicleDto> UpdateVehicleByIdToActiveAsync(int vehicleId);
+        /// <returns>Vehicle.</returns>
+        Task<Vehicle> UpdateVehicleByIdToActiveAsync(int vehicleId);
 
         /// <summary>
         /// Update Vehicle to no Active in the fleet <see cref="Vehicle"/>.
         /// </summary>
         /// <returns>list of vehicles that will be updated to no active in the fleet.</returns>
-        Task<List<VehicleDto>> UpdateVehiclesToNoActiveAsync();
+        Task<List<Vehicle>> UpdateVehiclesToNoActiveAsync();
 
         /// <summary>
         /// Delete Vehicle <see cref="Vehicle"/>.
@@ -70,19 +69,5 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Services
         /// <param name="vehicleId">The unique identifier of the vehicle to be deleted.</param>
         /// <returns>task.</returns>
         Task DeleteVehicleAsync(int vehicleId);
-
-        /// <summary>
-        /// ValidateColor.
-        /// </summary>
-        /// <param name="vehicleDto">vehicleDto.</param>
-        /// <returns>true or false if exist  Color.</returns>
-        bool ValidateColor(VehicleDto vehicleDto);
-
-        /// <summary>
-        /// ValidatePort.
-        /// </summary>
-        /// <param name="vehicleDto">vehicleDto.</param>
-        /// <returns>true or false if exist  Port.</returns>
-        bool ValidatePort(VehicleDto vehicleDto);
     }
 }

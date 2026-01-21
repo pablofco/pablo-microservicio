@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Models;
 using GtMotive.Estimate.Microservice.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
     /// <summary>
     /// ParameterRepository.
     /// </summary>
-    public class ParameterRepository(HexagonalDbContext rentingDbContext) : IParameterRepository
+    public class ParameterRepository(HexagonalDbContext rentingDbContext) : IParameterRepositoryPort
     {
         private readonly HexagonalDbContext _rentingDbContext = rentingDbContext;
 
