@@ -19,9 +19,9 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.DataTest
         {
             return new List<Customer>
            {
-               new() { CustomerId = 1, Name = "Amaro", LastName = "Leon", DocumentType = DocumentType.DNI, Document = "01145678B", BirthDate = DateTime.Parse("1982/02/15", new CultureInfo("es-ES")) },
-               new() { CustomerId = 2, Name = "Irina", LastName = "Dolgikh", DocumentType = DocumentType.Passport, Document = "123456789", BirthDate = null },
-               new() { CustomerId = 3, Name = "Mateo", LastName = "L.Dolgikh", DocumentType = DocumentType.DNI, Document = "A98765432", BirthDate = null }
+               new() { CustomerId = 1, Name = "Pablo", LastName = "Garcia", DocumentType = DocumentType.DNI, Document = "44714852M", BirthDate = DateTime.Parse("1993/02/06", new CultureInfo("es-ES")) },
+               new() { CustomerId = 2, Name = "Andrea", LastName = "Garcia", DocumentType = DocumentType.Passport, Document = "44693254L", BirthDate = null },
+               new() { CustomerId = 3, Name = "Pablo Antonio", LastName = "Garcia", DocumentType = DocumentType.DNI, Document = "44965142V", BirthDate = null }
            };
         }
 

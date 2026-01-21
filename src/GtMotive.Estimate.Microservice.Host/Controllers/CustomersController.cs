@@ -10,12 +10,12 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
     /// Initializes a new instance of the <see cref="CustomersController"/> class.
     /// CustomersController.
     /// </summary>
-    /// <param name="customerService">customerService.</param>
+    /// <param name="customerMapperPort">customerService.</param>
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class CustomersController(ICustomerMapperPort customerService) : ControllerBase
+    public sealed class CustomersController(ICustomerMapperPort customerMapperPort) : ControllerBase
     {
-        private readonly ICustomerMapperPort _customerService = customerService;
+        private readonly ICustomerMapperPort _customerMapperPort = customerMapperPort;
 
         /// <summary>
         /// Get the list of all Customers.
@@ -24,7 +24,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetCustomers()
         {
-            return Ok(await _customerService.GetCustomersAllAsync());
+            return Ok(await _customerMapperPort.GetCustomersAllAsync());
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("customer/{customerId}")]
         public async Task<IActionResult> GetCustomer(int customerId)
         {
-            var customer = await _customerService.GetCustomerByIdAsync(customerId);
+            var customer = await _customerMapperPort.GetCustomerByIdAsync(customerId);
 
             return customer == null ? NotFound() : Ok(customer);
         }
@@ -47,7 +47,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("rentings")]
         public async Task<IActionResult> GetCustomersWithRentings()
         {
-            var customers = await _customerService.GetCustomersWithRentingsAsync();
+            var customers = await _customerMapperPort.GetCustomersWithRentingsAsync();
 
             return Ok(customers);
         }
@@ -59,7 +59,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("rentings/vehicleactive")]
         public async Task<IActionResult> GetCustomersWithRentingsAndVehicleActive()
         {
-            var customers = await _customerService.GetCustomersWithRentingsAndVehicleActiveAsync();
+            var customers = await _customerMapperPort.GetCustomersWithRentingsAndVehicleActiveAsync();
 
             return Ok(customers);
         }
@@ -71,7 +71,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("rentings/vehiclenoactive")]
         public async Task<IActionResult> GetCustomersWithRentingsAndVehicleNoActive()
         {
-            var customers = await _customerService.GetCustomersWithRentingsAndVehicleNoActiveAsync();
+            var customers = await _customerMapperPort.GetCustomersWithRentingsAndVehicleNoActiveAsync();
 
             return Ok(customers);
         }
@@ -83,7 +83,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("rentings/vehiclenoreturn")]
         public async Task<IActionResult> GetCustomersWithRentingsAndVehicleNoReturnYet()
         {
-            var customers = await _customerService.GetCustomersWithRentingsAndVehicleNoReturnYetAsync();
+            var customers = await _customerMapperPort.GetCustomersWithRentingsAndVehicleNoReturnYetAsync();
 
             return Ok(customers);
         }
@@ -101,19 +101,19 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
                 return NotFound();
             }
 
-            if (!_customerService.ValidateDocumentType(customer))
+            if (!_customerMapperPort.ValidateDocumentType(customer))
             {
                 return BadRequest($"Invalid DocumentType:{customer.DocumentType}. Have to be: DNI = 1, Passport = 2.");
             }
 
-            if (await _customerService.GetCustomerByDocumentAsync(customer.Document) != null)
+            if (await _customerMapperPort.GetCustomerByDocumentAsync(customer.Document) != null)
             {
                 return BadRequest($"Customer with Document Number:{customer.Document}, already exist.");
             }
 
             try
             {
-                customer = await _customerService.AddCustomerAsync(customer);
+                customer = await _customerMapperPort.AddCustomerAsync(customer);
                 return CreatedAtAction(nameof(GetCustomer), new { customerId = customer.CustomerId }, customer);
             }
             catch (DbUpdateException ex)
@@ -135,17 +135,17 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
                 return NotFound();
             }
 
-            if (await _customerService.GetCustomerByIdAsync(customer.CustomerId) == null)
+            if (await _customerMapperPort.GetCustomerByIdAsync(customer.CustomerId) == null)
             {
                 return NotFound($"Customer with CustomerId:{customer.CustomerId} not found.");
             }
 
-            if (!_customerService.ValidateDocumentType(customer))
+            if (!_customerMapperPort.ValidateDocumentType(customer))
             {
                 return BadRequest($"Invalid document type {customer.DocumentType}. Have to be: DNI = 1, Passport = 2.");
             }
 
-            var customerValidate = await _customerService.GetCustomerByDocumentAsync(customer.Document);
+            var customerValidate = await _customerMapperPort.GetCustomerByDocumentAsync(customer.Document);
             if (customerValidate != null && customerValidate.CustomerId != customer.CustomerId)
             {
                 return BadRequest($"Customer with Document:{customer.Document} and CustomerId:{customer.CustomerId} already exist in other CustomerId:{customerValidate.CustomerId}.");
@@ -153,7 +153,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 
             try
             {
-                customer = await _customerService.UpdateCustomerAsync(customer);
+                customer = await _customerMapperPort.UpdateCustomerAsync(customer);
                 return Ok(customer);
             }
             catch (DbUpdateException ex)
@@ -170,7 +170,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpDelete("delete/{customerId}")]
         public async Task<IActionResult> DeleteCustomer(int customerId)
         {
-            await _customerService.DeleteCustomerAsync(customerId);
+            await _customerMapperPort.DeleteCustomerAsync(customerId);
 
             return NoContent();
         }

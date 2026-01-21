@@ -9,13 +9,13 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class RentingsController(IRentingMapperPort rentingService,
-        ICustomerMapperPort customerService,
-        IVehicleMapperPort vehicleService) : ControllerBase
+    public sealed class RentingsController(IRentingMapperPort rentingMapperPort,
+        ICustomerMapperPort customerMapperPort,
+        IVehicleMapperPort vehicleMapperPort) : ControllerBase
     {
-        private readonly IRentingMapperPort _rentingService = rentingService;
-        private readonly ICustomerMapperPort _customerService = customerService;
-        private readonly IVehicleMapperPort _vehicleService = vehicleService;
+        private readonly IRentingMapperPort _rentingMapperPort = rentingMapperPort;
+        private readonly ICustomerMapperPort _customerMapperPort = customerMapperPort;
+        private readonly IVehicleMapperPort _vehicleMapperPort = vehicleMapperPort;
 
         /// <summary>
         /// Get the list of all rentings.
@@ -24,7 +24,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetRentings()
         {
-            return Ok(await _rentingService.GetRentingsAllAsync());
+            return Ok(await _rentingMapperPort.GetRentingsAllAsync());
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("renting/{rentingId}")]
         public async Task<IActionResult> GetRenting(int rentingId)
         {
-            var renting = await _rentingService.GetRentingByIdAsync(rentingId);
+            var renting = await _rentingMapperPort.GetRentingByIdAsync(rentingId);
 
             return renting == null ? NotFound() : Ok(renting);
         }
@@ -47,7 +47,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("alive")]
         public async Task<IActionResult> GetRentingsWithVehicleNoReturnYetAsync()
         {
-            var rentings = await _rentingService.GetStillAliveAsync();
+            var rentings = await _rentingMapperPort.GetStillAliveAsync();
 
             return Ok(rentings);
         }
@@ -59,7 +59,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("vehicleactive")]
         public async Task<IActionResult> GetRentingsVehicleActive()
         {
-            var rentings = await _rentingService.GetRentingsVehicleActiveAsync();
+            var rentings = await _rentingMapperPort.GetRentingsVehicleActiveAsync();
 
             return Ok(rentings);
         }
@@ -71,7 +71,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("vehiclenoactive")]
         public async Task<IActionResult> GetRentingsVehicleNoActive()
         {
-            var rentings = await _rentingService.GetRentingsVehicleNoActiveAsync();
+            var rentings = await _rentingMapperPort.GetRentingsVehicleNoActiveAsync();
 
             return Ok(rentings);
         }
@@ -84,7 +84,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("datesbetween/{dateBetween}")]
         public async Task<IActionResult> GetRentingsDatesBetween(DateTime dateBetween)
         {
-            var rentings = await _rentingService.GetRentingsDatesBetweenAsync(dateBetween);
+            var rentings = await _rentingMapperPort.GetRentingsDatesBetweenAsync(dateBetween);
 
             return Ok(rentings);
         }
@@ -98,7 +98,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("renting/customer/{customerId}/datesbetween/{date}")]
         public async Task<IActionResult> GetRentingsByCustomerIdDatesBetween(int customerId, DateTime date)
         {
-            var rentings = await _rentingService.GetRentingsByCustomerIdDatesBetweenAsync(customerId, date);
+            var rentings = await _rentingMapperPort.GetRentingsByCustomerIdDatesBetweenAsync(customerId, date);
 
             return Ok(rentings);
         }
@@ -116,29 +116,29 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
                 return NotFound();
             }
 
-            if (await _customerService.GetCustomerByIdAsync(rentingNew.CustomerId) == null)
+            if (await _customerMapperPort.GetCustomerByIdAsync(rentingNew.CustomerId) == null)
             {
                 return NotFound($"Customer with ID {rentingNew.CustomerId} not found.");
             }
 
-            if (await _vehicleService.GetVehicleByIdAsync(rentingNew.VehicleId) == null)
+            if (await _vehicleMapperPort.GetVehicleByIdAsync(rentingNew.VehicleId) == null)
             {
                 return NotFound($"Vehicle with ID {rentingNew.VehicleId} not found.");
             }
 
-            var (result, message) = _rentingService.ValidateRentingDates(rentingNew.DateStart, rentingNew.DateEnd);
+            var (result, message) = _rentingMapperPort.ValidateRentingDates(rentingNew.DateStart, rentingNew.DateEnd);
             if (!result)
             {
                 return BadRequest(message);
             }
 
-            var (resultStillAlive, rentingsId) = await _rentingService.ValidateRentingStillAliveAsync(rentingNew.CustomerId);
+            var (resultStillAlive, rentingsId) = await _rentingMapperPort.ValidateRentingStillAliveAsync(rentingNew.CustomerId);
             if (resultStillAlive)
             {
                 return BadRequest($"This Customer has another renting alive CustomerId:{rentingNew.CustomerId}, RentingId:{string.Join(" - ", rentingsId)}");
             }
 
-            var (resultVehicle, messageVehicle) = await _rentingService.ValidateCanRentingWithVehicleIdAsync(rentingNew.VehicleId, rentingNew.DateStart);
+            var (resultVehicle, messageVehicle) = await _rentingMapperPort.ValidateCanRentingWithVehicleIdAsync(rentingNew.VehicleId, rentingNew.DateStart);
             if (!resultVehicle)
             {
                 return BadRequest($"{messageVehicle}");
@@ -146,10 +146,10 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 
             try
             {
-                var renting = _rentingService.ConvertDtoToRenting(rentingNew);
-                renting.Price = await _rentingService.GetPrice(rentingNew.DateStart, rentingNew.DateEnd);
+                var renting = _rentingMapperPort.ConvertDtoToRenting(rentingNew);
+                renting.Price = await _rentingMapperPort.GetPrice(rentingNew.DateStart, rentingNew.DateEnd);
 
-                renting = await _rentingService.AddRentingAsync(renting);
+                renting = await _rentingMapperPort.AddRentingAsync(renting);
                 return CreatedAtAction(nameof(GetRenting), new { rentingId = rentingNew.RentingId }, renting);
             }
             catch (DbUpdateException ex)
@@ -171,17 +171,17 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
                 return NotFound();
             }
 
-            if (await _customerService.GetCustomerByIdAsync(renting.CustomerId) == null)
+            if (await _customerMapperPort.GetCustomerByIdAsync(renting.CustomerId) == null)
             {
                 return NotFound($"Customer with ID {renting.CustomerId} not found.");
             }
 
-            if (await _vehicleService.GetVehicleByIdAsync(renting.VehicleId) == null)
+            if (await _vehicleMapperPort.GetVehicleByIdAsync(renting.VehicleId) == null)
             {
                 return NotFound($"Vehicle with ID {renting.VehicleId} not found.");
             }
 
-            var (result, message) = _rentingService.ValidateRentingDates(renting.DateStart, renting.DateEnd);
+            var (result, message) = _rentingMapperPort.ValidateRentingDates(renting.DateStart, renting.DateEnd);
             if (!result)
             {
                 return BadRequest(message);
@@ -189,8 +189,8 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 
             try
             {
-                renting.Price = await _rentingService.GetPrice(renting.DateStart, renting.DateEnd);
-                renting = await _rentingService.UpdateRentingAsync(renting);
+                renting.Price = await _rentingMapperPort.GetPrice(renting.DateStart, renting.DateEnd);
+                renting = await _rentingMapperPort.UpdateRentingAsync(renting);
                 return Ok(renting);
             }
             catch (DbUpdateException ex)
@@ -208,13 +208,13 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpPut("close/rentingId/{rentingId}/dateEnd/{dateEnd}")]
         public async Task<IActionResult> PutRentingClose(int rentingId, DateTime dateEnd)
         {
-            var rentingUpdate = await _rentingService.GetRentingByIdAsync(rentingId);
+            var rentingUpdate = await _rentingMapperPort.GetRentingByIdAsync(rentingId);
             if (rentingUpdate == null)
             {
                 return NotFound($"This renting not exist {rentingUpdate.RentingId} not found.");
             }
 
-            var (result, message) = _rentingService.ValidateRentingDates(rentingUpdate.DateStart, dateEnd);
+            var (result, message) = _rentingMapperPort.ValidateRentingDates(rentingUpdate.DateStart, dateEnd);
             if (!result)
             {
                 return BadRequest(message);
@@ -222,7 +222,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 
             try
             {
-                var renting = await _rentingService.UpdateRentingCloseAsync(rentingId, dateEnd);
+                var renting = await _rentingMapperPort.UpdateRentingCloseAsync(rentingId, dateEnd);
                 return Ok(renting);
             }
             catch (DbUpdateException ex)
@@ -239,7 +239,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpDelete("delete/{rentingId}")]
         public async Task<IActionResult> DeleteRenting(int rentingId)
         {
-            await _rentingService.DeleteRentingAsync(rentingId);
+            await _rentingMapperPort.DeleteRentingAsync(rentingId);
 
             return NoContent();
         }

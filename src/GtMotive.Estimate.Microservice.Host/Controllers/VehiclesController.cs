@@ -9,9 +9,9 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class VehiclesController(IVehicleMapperPort vehicleService) : ControllerBase
+    public sealed class VehiclesController(IVehicleMapperPort vehicleMapperPort) : ControllerBase
     {
-        private readonly IVehicleMapperPort _vehicleService = vehicleService;
+        private readonly IVehicleMapperPort _vehicleMapperPort = vehicleMapperPort;
 
         /// <summary>
         /// Get the list of all Vehicles.
@@ -20,7 +20,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetVehicles()
         {
-            return Ok(await _vehicleService.GetVehiclesAllAsync());
+            return Ok(await _vehicleMapperPort.GetVehiclesAllAsync());
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpGet("vehicle/{vehicleId}")]
         public async Task<IActionResult> GetVehicle(int vehicleId)
         {
-            var vehicle = await _vehicleService.GetVehicleByIdAsync(vehicleId);
+            var vehicle = await _vehicleMapperPort.GetVehicleByIdAsync(vehicleId);
 
             return vehicle == null ? NotFound() : Ok(vehicle);
         }
@@ -49,24 +49,24 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
                 return NotFound();
             }
 
-            if (!_vehicleService.ValidateColor(vehicle))
+            if (!_vehicleMapperPort.ValidateColor(vehicle))
             {
                 return BadRequest($"Invalid Color:{vehicle.Color}. Have to be: Red = 1, Blue = 2, Green = 3.");
             }
 
-            if (!_vehicleService.ValidatePort(vehicle))
+            if (!_vehicleMapperPort.ValidatePort(vehicle))
             {
                 return BadRequest($"Invalid Port:{vehicle.Ports}. Have to be: Three = 3, Five = 5.");
             }
 
-            if (await _vehicleService.GetVehicleByNumberIdAsync(vehicle.NumberId) != null)
+            if (await _vehicleMapperPort.GetVehicleByNumberIdAsync(vehicle.NumberId) != null)
             {
                 return BadRequest($"Vehicle already exist {vehicle.NumberId}.");
             }
 
             try
             {
-                vehicle = await _vehicleService.AddVehicleAsync(vehicle);
+                vehicle = await _vehicleMapperPort.AddVehicleAsync(vehicle);
                 return CreatedAtAction(nameof(GetVehicle), new { vehicleId = vehicle.VehicleId }, vehicle);
             }
             catch (DbUpdateException ex)
@@ -88,27 +88,27 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
                 return NotFound();
             }
 
-            if (await _vehicleService.GetVehicleByIdAsync(vehicle.VehicleId) == null)
+            if (await _vehicleMapperPort.GetVehicleByIdAsync(vehicle.VehicleId) == null)
             {
                 return NotFound($"Vehicle with VehicleId:{vehicle.VehicleId} not found.");
             }
 
-            if (!_vehicleService.ValidateColor(vehicle))
+            if (!_vehicleMapperPort.ValidateColor(vehicle))
             {
                 return BadRequest($"Invalid Color:{vehicle.Color}. Have to be: Red = 1, Blue = 2, Green = 3.");
             }
 
-            if (!_vehicleService.ValidatePort(vehicle))
+            if (!_vehicleMapperPort.ValidatePort(vehicle))
             {
                 return BadRequest($"Invalid Port:{vehicle.Ports}. Have to be: Three = 3, Five = 5.");
             }
 
-            if (await _vehicleService.GetVehicleByNumberIdAsync(vehicle.NumberId) != null)
+            if (await _vehicleMapperPort.GetVehicleByNumberIdAsync(vehicle.NumberId) != null)
             {
                 return BadRequest($"Vehicle already exist {vehicle.NumberId}.");
             }
 
-            var vehicleValidate = await _vehicleService.GetVehicleByNumberIdAsync(vehicle.NumberId);
+            var vehicleValidate = await _vehicleMapperPort.GetVehicleByNumberIdAsync(vehicle.NumberId);
             if (vehicleValidate != null && vehicleValidate.VehicleId != vehicle.VehicleId)
             {
                 return BadRequest($"Vehicle with NumberId:{vehicle.NumberId} and NumberId:{vehicle.NumberId} already exist in other VehicleId:{vehicleValidate.VehicleId}.");
@@ -116,7 +116,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 
             try
             {
-                vehicle = await _vehicleService.UpdateVehicleAsync(vehicle);
+                vehicle = await _vehicleMapperPort.UpdateVehicleAsync(vehicle);
                 return Ok(vehicle);
             }
             catch (DbUpdateException ex)
@@ -133,7 +133,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpPut("active/{vehicleId}")]
         public async Task<IActionResult> PutVehicleActive(int vehicleId)
         {
-            var vehicle = await _vehicleService.GetVehicleByIdAsync(vehicleId);
+            var vehicle = await _vehicleMapperPort.GetVehicleByIdAsync(vehicleId);
             if (vehicle == null)
             {
                 return NotFound($"Vehicle with VehicleId:{vehicle.VehicleId} not found.");
@@ -141,7 +141,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 
             try
             {
-                vehicle = await _vehicleService.UpdateVehicleByIdToActiveAsync(vehicleId);
+                vehicle = await _vehicleMapperPort.UpdateVehicleByIdToActiveAsync(vehicleId);
                 return Ok(vehicle);
             }
             catch (DbUpdateException ex)
@@ -159,7 +159,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         {
             try
             {
-                var vehicles = await _vehicleService.UpdateVehiclesToNoActiveAsync();
+                var vehicles = await _vehicleMapperPort.UpdateVehiclesToNoActiveAsync();
 
                 return vehicles == null || vehicles.Count == 0
                     ? NotFound("No vehicles found to update to No active.")
@@ -179,7 +179,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpDelete("delete/{vehicleId}")]
         public async Task<IActionResult> DeleteVehicle(int vehicleId)
         {
-            await _vehicleService.DeleteVehicleAsync(vehicleId);
+            await _vehicleMapperPort.DeleteVehicleAsync(vehicleId);
 
             return NoContent();
         }
