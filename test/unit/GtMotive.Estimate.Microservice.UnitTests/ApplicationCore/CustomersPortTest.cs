@@ -32,6 +32,14 @@ namespace GtMotive.Estimate.Microservice.UnitTests.ApplicationCore
                 .Setup(m => m.GetCustomerByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(new CustomerDto { CustomerId = 1 });
 
+            mapperMock
+                .Setup(m => m.Map<CustomerDto>(It.IsAny<Customer>()))
+                .Returns(new CustomerDto
+                {
+                    CustomerId = 1,
+                    Name = "Test"
+                });
+
             var customerAdapter = new CustomerMapper(repoPortMock.Object, mapperMock.Object);
 
             // Act

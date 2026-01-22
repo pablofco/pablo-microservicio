@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using GtMotive.Estimate.Microservice.Domain.Models;
+using GtMotive.Estimate.Microservice.FunctionalTests.DataTest;
 using GtMotive.Estimate.Microservice.Infrastructure.Database;
 using GtMotive.Estimate.Microservice.Infrastructure.Repositories;
-using GtMotive.Estimate.Microservice.InfrastructureTests.DataTest;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -12,19 +14,19 @@ using Xunit;
 namespace GtMotive.Estimate.Microservice.InfrastructureTests.Repositories
 {
     /// <summary>
-    /// Unit tests for the <see cref="CustomerRepository"/> class.
+    /// Unit tests for the <see cref="RentingRepositoryTest"/> class.
     /// </summary>
     /// <remarks>
-    /// Initializes a new instance of the <see cref="CustomerRepositoryTest"/> class.
+    /// Initializes a new instance of the <see cref="RentingRepositoryTest"/> class.
     /// </remarks>
-    public class CustomerRepositoryTest
+    public class RentingRepositoryTest
     {
         /// <summary>
-        /// Tests the GetCustomerByIdShouldReturnCustomerWhenCustomerExists method of the CustomerRepository.
+        /// Tests the GetRentingByIdShouldReturnVehiclesWhenVehiclesEmpty method of the RentingRepository.
         /// </summary>
         /// <returns>Assert.</returns>
         [Fact]
-        public async Task GetCustomerByIdShouldReturnCustomerWhenCustomerExists()
+        public async Task GetRentingByIdShouldReturnVehiclesWhenVehiclesEmpty()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
 
@@ -38,18 +40,19 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Repositories
                     context.Database.EnsureCreated();
 
                     // Arrange
+                    var vehicleId = Data.GetVehicles().Max(v => v.VehicleId) + 1;
+
                     var fixture = new Fixture();
                     fixture.Inject(context);
 
-                    var customerId = Data.GetCustomers().FirstOrDefault().CustomerId;
-                    var repository = fixture.Build<CustomerRepository>().OmitAutoProperties().Create();
+                    var repository = fixture.Build<RetingRepository>().OmitAutoProperties().Create();
 
                     // Act
-                    var customer = await repository.GetCustomerByIdAsync(customerId);
+                    var vehicles = await repository.GetRentingByVehicleIdAsync(vehicleId);
 
                     // Assert
-                    customer.Should().NotBeNull();
-                    customer.CustomerId.Should().Be(customerId);
+                    vehicles.Should().BeNullOrEmpty();
+                    vehicles.Should().BeOfType<List<Renting>>();
                 }
             }
         }

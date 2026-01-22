@@ -4,7 +4,7 @@ using System.Globalization;
 using GtMotive.Estimate.Microservice.Domain.Enums;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
-namespace GtMotive.Estimate.Microservice.InfrastructureTests.DataTest
+namespace GtMotive.Estimate.Microservice.FunctionalTests.DataTest
 {
     /// <summary>
     /// Data.
