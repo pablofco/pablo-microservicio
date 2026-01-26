@@ -42,18 +42,6 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         }
 
         /// <summary>
-        /// Get the list of Cutomers that have or had rentings.
-        /// </summary>
-        /// <returns>list of Cutomers.</returns>
-        [HttpGet("customervehiclesrenting")]
-        public async Task<IActionResult> GetCustomersWithRentings()
-        {
-            var customers = await _customerMapperPort.GetCustomersWithRentingsAsync();
-
-            return Ok(customers);
-        }
-
-        /// <summary>
         /// PostCustomer, Add Customer.
         /// </summary>
         /// <param name="customer">customer.</param>

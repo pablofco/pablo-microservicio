@@ -31,13 +31,6 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
             var createVehicleUseCaseMock = new Mock<IVehicleUseCaseOutput<CreateVehicleUseCaseOutput>>();
             var editVehicleUseCaseMock = new Mock<IVehicleUseCaseOutput<EditVehicleUseCaseOutput>>();
             var mapperPortMock = new Mock<IVehicleMapperPort>();
-            mapperPortMock
-                .Setup(s => s.ValidateColor(It.IsAny<VehicleDto>()))
-                .Returns(true);
-
-            mapperPortMock
-                .Setup(s => s.ValidatePort(It.IsAny<VehicleDto>()))
-                .Returns(true);
 
             mapperPortMock
                 .Setup(s => s.GetVehicleByNumberIdAsync(It.IsAny<string>()))
@@ -76,13 +69,6 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
             var createVehicleUseCaseMock = new Mock<IVehicleUseCaseOutput<CreateVehicleUseCaseOutput>>();
             var editVehicleUseCaseMock = new Mock<IVehicleUseCaseOutput<EditVehicleUseCaseOutput>>();
             var mapperPortMock = new Mock<IVehicleMapperPort>();
-            mapperPortMock
-                .Setup(s => s.ValidateColor(It.IsAny<VehicleDto>()))
-                .Returns(true);
-
-            mapperPortMock
-                .Setup(s => s.ValidatePort(It.IsAny<VehicleDto>()))
-                .Returns(false);
 
             mapperPortMock
                 .Setup(s => s.GetVehicleByNumberIdAsync(It.IsAny<string>()))

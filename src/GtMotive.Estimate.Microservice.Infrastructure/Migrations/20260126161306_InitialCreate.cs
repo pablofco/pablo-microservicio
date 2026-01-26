@@ -10,7 +10,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
 #pragma warning restore IDE0240 // Quitar directiva redundante que admite un valor NULL
 {
     /// <inheritdoc />
-    public partial class Inicio : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,7 +56,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NumberId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Color = table.Column<int>(type: "int", nullable: false),
-                    Ports = table.Column<int>(type: "int", nullable: false),
+                    Doors = table.Column<int>(type: "int", nullable: false),
                     AdquisitionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Active = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -74,8 +74,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    DateEndReal = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PriceReal = table.Column<double>(type: "float", nullable: true),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     VehicleId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -123,11 +121,12 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
 #pragma warning disable CA1861 // Evitar matrices constantes como argumentos
             migrationBuilder.InsertData(
                 table: "Vehicles",
-                columns: new[] { "VehicleId", "Active", "AdquisitionDate", "Color", "NumberId", "Ports" },
+                columns: new[] { "VehicleId", "Active", "AdquisitionDate", "Color", "Doors", "NumberId" },
                 values: new object[,]
                 {
-                    { 1, true, new DateTime(2015, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "VH001", 3 },
-                    { 2, true, new DateTime(2025, 2, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "VH002", 5 }
+                    { 1, true, new DateTime(2025, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3, "3729-FDS" },
+                    { 2, true, new DateTime(2025, 2, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, 5, "0445-BCV" },
+                    { 3, true, new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 5, "6647-CSM" }
                 });
 #pragma warning restore CA1861 // Evitar matrices constantes como argumentos
 #pragma warning restore IDE0300 // Simplificar la inicialización de la recopilación
@@ -136,12 +135,12 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
 #pragma warning disable CA1861 // Evitar matrices constantes como argumentos
             migrationBuilder.InsertData(
                 table: "Rentings",
-                columns: new[] { "RentingId", "CustomerId", "DateEnd", "DateEndReal", "DateStart", "Price", "PriceReal", "VehicleId" },
+                columns: new[] { "RentingId", "CustomerId", "DateEnd", "DateStart", "Price", "VehicleId" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2025, 7, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 7, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 7, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 240.0, 240.0, 1 },
-                    { 2, 2, new DateTime(2025, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), null, new DateTime(2025, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 80.0, null, 2 },
-                    { 3, 3, new DateTime(2025, 7, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 160.0, 200.0, 2 }
+                    { 1, 1, new DateTime(2025, 7, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 7, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 240.0, 1 },
+                    { 2, 2, new DateTime(2025, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 80.0, 2 },
+                    { 3, 3, new DateTime(2025, 7, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 160.0, 2 }
                 });
 #pragma warning restore CA1861 // Evitar matrices constantes como argumentos
 #pragma warning restore IDE0300 // Simplificar la inicialización de la recopilación

@@ -45,20 +45,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
         Task<VehicleDto> UpdateVehicleAsync(VehicleDto vehicleDto);
 
         /// <summary>
-        /// Update Vehicles <see cref="Vehicle"/>.
-        /// </summary>
-        /// <param name="vehiclesDto">The unique identifier of the vehicle to be deleted.</param>
-        /// <returns>task.</returns>
-        Task UpdateVehiclesAsync(IList<VehicleDto> vehiclesDto);
-
-        /// <summary>
-        /// Update Vehicle to Active in the fleet. <see cref="Vehicle"/>.
-        /// </summary>
-        /// <param name="vehicleId">The unique identifier of the vehicle to be deleted.</param>
-        /// <returns>task.</returns>
-        Task<VehicleDto> UpdateVehicleByIdToActiveAsync(int vehicleId);
-
-        /// <summary>
         /// Update Vehicle to no Active in the fleet <see cref="Vehicle"/>.
         /// </summary>
         /// <returns>list of vehicles that will be updated to no active in the fleet.</returns>
@@ -70,19 +56,5 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
         /// <param name="vehicleId">The unique identifier of the vehicle to be deleted.</param>
         /// <returns>task.</returns>
         Task DeleteVehicleAsync(int vehicleId);
-
-        /// <summary>
-        /// ValidateColor.
-        /// </summary>
-        /// <param name="vehicleDto">vehicleDto.</param>
-        /// <returns>true or false if exist  Color.</returns>
-        bool ValidateColor(VehicleDto vehicleDto);
-
-        /// <summary>
-        /// ValidatePort.
-        /// </summary>
-        /// <param name="vehicleDto">vehicleDto.</param>
-        /// <returns>true or false if exist  Port.</returns>
-        bool ValidatePort(VehicleDto vehicleDto);
     }
 }

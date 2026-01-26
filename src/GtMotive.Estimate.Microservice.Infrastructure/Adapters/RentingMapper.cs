@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
@@ -49,24 +48,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         }
 
         /// <inheritdoc/>
-        public async Task<List<RentingCustomerVehicleDto>> GetStillAliveAsync()
-        {
-            var rentings = await _rentingRepository.GetRentingsStillAliveAsync();
-            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
-
-            return (List<RentingCustomerVehicleDto>)rentingsDto;
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<RentingCustomerVehicleDto>> GetRentingStillAliveByCustomerIdAsync(int customerId)
-        {
-            var rentings = await _rentingRepository.GetRentingStillAliveByCustomerIdAsync(customerId);
-            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
-
-            return (List<RentingCustomerVehicleDto>)rentingsDto;
-        }
-
-        /// <inheritdoc/>
         public async Task<List<RentingCustomerVehicleDto>> GetRentingByVehicleIdAsync(int vehicleId)
         {
             var rentings = await _rentingRepository.GetRentingByVehicleIdAsync(vehicleId);
@@ -88,24 +69,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         public async Task<List<RentingCustomerVehicleDto>> GetRentingsVehicleNoActiveAsync()
         {
             var rentings = await _rentingRepository.GetRentingsVehicleNoActiveAsync();
-            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
-
-            return (List<RentingCustomerVehicleDto>)rentingsDto;
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<RentingCustomerVehicleDto>> GetRentingsDatesBetweenAsync(DateTime dateBetween)
-        {
-            var rentings = await _rentingRepository.GetRentingsDatesBetweenAsync(dateBetween);
-            var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
-
-            return (List<RentingCustomerVehicleDto>)rentingsDto;
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<RentingCustomerVehicleDto>> GetRentingsByCustomerIdDatesBetweenAsync(int customerId, DateTime dateBetween)
-        {
-            var rentings = await _rentingRepository.GetRentingsByCustomerIdDatesBetweenAsync(customerId, dateBetween);
             var rentingsDto = AdapterHelper.ConvertToList<Renting, RentingCustomerVehicleDto>(_mapper, rentings);
 
             return (List<RentingCustomerVehicleDto>)rentingsDto;
@@ -152,44 +115,11 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         }
 
         /// <inheritdoc/>
-        public async Task<(bool ResultStillAlive, List<int> RentingsId)> ValidateRentingStillAliveAsync(int customerId)
-        {
-            var customerHasRentingsAliveList = await _rentingRepository.GetRentingStillAliveByCustomerIdAsync(customerId);
-
-            return (customerHasRentingsAliveList.Count > 0, customerHasRentingsAliveList.Select(r => r.RentingId).ToList());
-        }
-
-        /// <inheritdoc/>
-        public (bool Result, string Message) ValidateRentingDates(DateTime dateStart, DateTime? dateEnd)
-        {
-            if (dateEnd == null)
-            {
-                return (true, "The renting dates are valid.");
-            }
-
-            return dateStart > dateEnd
-                ? ((bool Result, string Message))(false, "The start date cannot be later than the end date.")
-                : ((bool Result, string Message))(true, "The renting dates are valid.");
-        }
-
-        /// <inheritdoc/>
-        public async Task<(bool Result, string Message)> ValidateCanRentingWithVehicleIdAsync(int vehicleId, DateTime dateStart)
+        public async Task<List<Renting>> ValidateCanRentingWithVehicleIdAsync(int vehicleId, DateTime dateStart)
         {
             var rentings = await _rentingRepository.GetRentingByVehicleIdAsync(vehicleId);
 
-            var result = rentings.Where(r => dateStart >= r.DateStart && r.DateEndReal == null).ToList();
-            if (result.Count > 0)
-            {
-                return (false, $"The vehicle is already rented and has no end date, RentingsIds:{string.Join(", ", result.Select(r => r.RentingId).ToList())}");
-            }
-
-            result = rentings.Where(r => dateStart >= r.DateStart && r.DateEndReal != null && dateStart <= r.DateEndReal).ToList();
-            if (result.Count > 0)
-            {
-                return (false, $"The vehicle is already rented during the specified dates. RentingsIds: {string.Join(", ", result.Select(r => r.RentingId).ToList())}");
-            }
-
-            return (true, "The vehicle is available for renting.");
+            return rentings;
         }
 
         /// <inheritdoc/>

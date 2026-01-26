@@ -52,13 +52,14 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Database
                 new Customer { CustomerId = 3, Name = "Pablo Antonio", LastName = "Garcia", DocumentType = DocumentType.DNI, Document = "44965142V", BirthDate = null });
 
             modelBuilder.Entity<Vehicle>().HasData(
-                new Vehicle { VehicleId = 1, NumberId = "VH001", Color = Colors.Red, Ports = Ports.Three, AdquisitionDate = DateTime.Parse("2015/05/10", new CultureInfo("es-ES")), Active = true },
-                new Vehicle { VehicleId = 2, NumberId = "VH002", Color = Colors.Blue, Ports = Ports.Five, AdquisitionDate = DateTime.Parse("2025/02/12", new CultureInfo("es-ES")), Active = true });
+                new Vehicle { VehicleId = 1, NumberId = "3729-FDS", Color = Colors.Pink, Doors = Doors.Three, AdquisitionDate = DateTime.Parse("2025/05/10", new CultureInfo("es-ES")), Active = true },
+                new Vehicle { VehicleId = 2, NumberId = "0445-BCV", Color = Colors.Blue, Doors = Doors.Five, AdquisitionDate = DateTime.Parse("2025/02/12", new CultureInfo("es-ES")), Active = true },
+                new Vehicle { VehicleId = 3, NumberId = "6647-CSM", Color = Colors.Yellow, Doors = Doors.Five, AdquisitionDate = DateTime.Parse("2022/08/15", new CultureInfo("es-ES")), Active = true });
 
             modelBuilder.Entity<Renting>().HasData(
-                new Renting { RentingId = 1, CustomerId = 1, VehicleId = 1, DateStart = DateTime.Parse("2025/07/12", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/07/18", new CultureInfo("es-ES")), Price = 240, DateEndReal = DateTime.Parse("2025/07/18", new CultureInfo("es-ES")), PriceReal = 240 },
+                new Renting { RentingId = 1, CustomerId = 1, VehicleId = 1, DateStart = DateTime.Parse("2025/07/12", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/07/18", new CultureInfo("es-ES")), Price = 240 },
                 new Renting { RentingId = 2, CustomerId = 2, VehicleId = 2, DateStart = DateTime.Parse("2025/08/08", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/08/10", new CultureInfo("es-ES")), Price = 80 },
-                new Renting { RentingId = 3, CustomerId = 3, VehicleId = 2, DateStart = DateTime.Parse("2025/07/20", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/07/24", new CultureInfo("es-ES")), Price = 160, DateEndReal = DateTime.Parse("2025/07/25", new CultureInfo("es-ES")), PriceReal = 200 });
+                new Renting { RentingId = 3, CustomerId = 3, VehicleId = 2, DateStart = DateTime.Parse("2025/07/20", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/07/24", new CultureInfo("es-ES")), Price = 160 });
 
             modelBuilder.Entity<Parameter>().HasData(
                 new Parameter { ParameterId = 1, PreciPerDay = 40, YearsToNoActiveVehicle = 5 });

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
@@ -52,22 +53,19 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Rentings
                     return ($"El vehículo ya no está activo tiene más de 5 años.", null);
                 }
 
-                var (result, message) = _rentingMapperPort.ValidateRentingDates(rentingDto.DateStart, rentingDto.DateEnd);
-                if (!result)
+                var rentings = await _rentingMapperPort.ValidateCanRentingWithVehicleIdAsync(rentingDto.VehicleId, rentingDto.DateStart);
+
+                var result2 = rentings.Where(r => rentingDto.DateStart >= r.DateStart).ToList();
+
+                if (result2.Count > 0)
                 {
-                    return (message, null);
+                    return ($"The vehicle is already rented and has no end date, RentingsIds:{string.Join(", ", result2.Select(r => r.RentingId).ToList())}", null);
                 }
 
-                var (resultStillAlive, rentingsId) = await _rentingMapperPort.ValidateRentingStillAliveAsync(rentingDto.CustomerId);
-                if (resultStillAlive)
+                result2 = rentings.Where(r => rentingDto.DateStart >= r.DateStart && rentingDto.DateStart <= r.DateEnd).ToList();
+                if (result2.Count > 0)
                 {
-                    return ($"This Customer has another renting alive CustomerId:{rentingDto.CustomerId}, RentingId:{string.Join(" - ", rentingsId)}", null);
-                }
-
-                var (resultVehicle, messageVehicle) = await _rentingMapperPort.ValidateCanRentingWithVehicleIdAsync(rentingDto.VehicleId, rentingDto.DateStart);
-                if (!resultVehicle)
-                {
-                    return ($"{messageVehicle}", null);
+                    return ($"The vehicle is already rented during the specified dates. RentingsIds: {string.Join(", ", result2.Select(r => r.RentingId).ToList())}", null);
                 }
 
                 rentingDto.Price = await _rentingMapperPort.GetPrice(rentingDto.DateStart, rentingDto.DateEnd);

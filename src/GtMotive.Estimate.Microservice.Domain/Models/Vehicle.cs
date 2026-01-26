@@ -27,9 +27,9 @@ namespace GtMotive.Estimate.Microservice.Domain.Models
         public Colors Color { get; set; }
 
         /// <summary>
-        /// Gets or sets the ports of the vehicle.
+        /// Gets or sets the doors of the vehicle.
         /// </summary>
-        public Ports Ports { get; set; }
+        public Doors Doors { get; set; }
 
         /// <summary>
         /// Gets or sets the date of adquisition of the vehicle.

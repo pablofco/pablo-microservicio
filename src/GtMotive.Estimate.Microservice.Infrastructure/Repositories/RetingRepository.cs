@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
@@ -35,26 +34,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<List<Renting>> GetRentingsStillAliveAsync()
-        {
-            return await _rentingDbContext.Rentings
-                                        .Include(c => c.Customer)
-                                        .Include(v => v.Vehicle)
-                                        .Where(r => r.DateEndReal == null)
-                                        .ToListAsync();
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<Renting>> GetRentingStillAliveByCustomerIdAsync(int customerId)
-        {
-            return await _rentingDbContext.Rentings
-                                        .Include(c => c.Customer)
-                                        .Include(v => v.Vehicle)
-                                        .Where(r => r.CustomerId == customerId && r.DateEndReal == null)
-                                        .ToListAsync();
-        }
-
-        /// <inheritdoc/>
         public async Task<List<Renting>> GetRentingByVehicleIdAsync(int vehicleId)
         {
             return await _rentingDbContext.Rentings
@@ -81,27 +60,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
                                         .Include(c => c.Customer)
                                         .Include(v => v.Vehicle)
                                         .Where(x => !x.Vehicle.Active)
-                                        .ToListAsync();
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<Renting>> GetRentingsDatesBetweenAsync(DateTime dateBetween)
-        {
-            return await _rentingDbContext.Rentings
-                                        .Include(c => c.Customer)
-                                        .Include(v => v.Vehicle)
-                                        .Where(r => r.DateStart <= dateBetween && (r.DateEnd >= dateBetween || (r.DateEndReal != null && r.DateEndReal >= dateBetween)))
-                                        .ToListAsync();
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<Renting>> GetRentingsByCustomerIdDatesBetweenAsync(int customerId, DateTime dateBetween)
-        {
-            return await _rentingDbContext.Rentings
-                                        .Include(c => c.Customer)
-                                        .Include(v => v.Vehicle)
-                                        .Where(r => r.DateStart <= dateBetween && (r.DateEnd >= dateBetween || (r.DateEndReal != null && r.DateEndReal >= dateBetween)))
-                                        .Where(r => r.CustomerId == customerId)
                                         .ToListAsync();
         }
 

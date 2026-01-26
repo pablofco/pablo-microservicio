@@ -31,26 +31,14 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// <summary>
         /// Get one Renting.
         /// </summary>
-        /// <param name="rentId">id of renting.</param>
+        /// <param name="rentingId">id of renting.</param>
         /// <returns>Renting.</returns>
-        [HttpGet("renting/{rentId}")]
-        public async Task<IActionResult> GetRenting(int rentId)
+        [HttpGet("renting/{rentingId}")]
+        public async Task<IActionResult> GetRenting(int rentingId)
         {
-            var renting = await _rentingMapperPort.GetRentingByIdAsync(rentId);
+            var renting = await _rentingMapperPort.GetRentingByIdAsync(rentingId);
 
-            return renting == null ? NotFound() : Ok(renting);
-        }
-
-        /// <summary>
-        /// Get the list of Rentings that have vehicles no return yet..
-        /// </summary>
-        /// <returns>list of Rentings.</returns>
-        [HttpGet("alquilados")]
-        public async Task<IActionResult> GetRentingsWithVehicleNoReturnYetAsync()
-        {
-            var rentings = await _rentingMapperPort.GetStillAliveAsync();
-
-            return Ok(rentings);
+            return renting == null ? NotFound() : Ok(rentingId);
         }
 
         /// <summary>
@@ -82,17 +70,17 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         }
 
         /// <summary>
-        /// PutRenting, Update Renting.
+        /// PutRentingClose, Update Renting, end of the renting dateEnd.
         /// </summary>
-        /// <param name="renting">renting.</param>
+        /// <param name="rentingId">rentingId.</param>
+        /// <param name="dateEnd">dateEnd.</param>
         /// <returns>NoContent.</returns>
-        [HttpPut("NoActive")]
-        public async Task<IActionResult> PutRenting(RentingDto renting)
+        [HttpPut("close/rentingId/{rentingId}/dateEnd/{dateEnd}")]
+        public async Task<IActionResult> PutRentingClose(int rentingId, DateTime dateEnd)
         {
-            ArgumentNullException.ThrowIfNull(renting);
-
             try
             {
+                var renting = new RentingDto { RentingId = rentingId, DateEnd = dateEnd };
                 var (message, model) = await _editRentingUseCase.ExecuteAsync(renting);
                 if (message != "Ok")
                 {
@@ -110,39 +98,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         }
 
         /// <summary>
-        /// PutRentingClose, Update Renting, end of the renting dateEnd.
-        /// </summary>
-        /// <param name="rentingId">rentingId.</param>
-        /// <param name="dateEnd">dateEnd.</param>
-        /// <returns>NoContent.</returns>
-        [HttpPut("close/rentingId/{rentingId}/dateEnd/{dateEnd}")]
-        public async Task<IActionResult> PutRentingClose(int rentingId, DateTime dateEnd)
-        {
-            var rentingUpdate = await _rentingMapperPort.GetRentingByIdAsync(rentingId);
-            if (rentingUpdate == null)
-            {
-                return NotFound($"This renting not exist {rentingUpdate.RentingId} not found.");
-            }
-
-            var (result, message) = _rentingMapperPort.ValidateRentingDates(rentingUpdate.DateStart, dateEnd);
-            if (!result)
-            {
-                return BadRequest(message);
-            }
-
-            try
-            {
-                var renting = await _rentingMapperPort.UpdateRentingCloseAsync(rentingId, dateEnd);
-                return Ok(renting);
-            }
-            catch (DbUpdateException ex)
-            {
-                return BadRequest($"An error occurred while updating the renting. {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// DeleteRenting, Delete Renting.
+        /// Delete Renting.
         /// </summary>
         /// <param name="rentingId">vehicle.</param>
         /// <returns>NoContent.</returns>

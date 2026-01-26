@@ -38,7 +38,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Customers
                 BirthDate = customerDto.BirthDate,
             };
 
-            if (await _customerMapperPort.GetCustomerByIdAsync(customer.CustomerId) != null)
+            if (await _customerMapperPort.GetCustomerByIdAsync(customer.CustomerId) == null)
             {
                 return ($"Customer with CustomerId:{customer.CustomerId} not found.", null);
             }

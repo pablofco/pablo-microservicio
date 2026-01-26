@@ -35,7 +35,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Vehicles
                     VehicleId = vehicleDto.VehicleId,
                     NumberId = vehicleDto.NumberId,
                     Color = vehicleDto.Color,
-                    Ports = vehicleDto.Ports,
+                    Doors = vehicleDto.Doors,
                     AdquisitionDate = vehicleDto.AdquisitionDate,
                     Active = true
                 };

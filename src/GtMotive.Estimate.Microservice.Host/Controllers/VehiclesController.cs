@@ -21,7 +21,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// Get the list of all Vehicles.
         /// </summary>
         /// <returns>list of Vehicles.</returns>
-        [HttpGet("todos")]
+        [HttpGet("all")]
         public async Task<IActionResult> GetVehicles()
         {
             return Ok(await _vehicleMapperPort.GetVehiclesAllAsync());
@@ -30,12 +30,12 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// <summary>
         /// Get one Vehicle.
         /// </summary>
-        /// <param name="vehiculoId">id of Vehicle.</param>
+        /// <param name="vehicleId">id of Vehicle.</param>
         /// <returns>Vehicle.</returns>
-        [HttpGet("vehiculo/{vehiculoId}")]
-        public async Task<IActionResult> GetVehicle(int vehiculoId)
+        [HttpGet("vehicle/{vehicleId}")]
+        public async Task<IActionResult> GetVehicle(int vehicleId)
         {
-            var vehicle = await _vehicleMapperPort.GetVehicleByIdAsync(vehiculoId);
+            var vehicle = await _vehicleMapperPort.GetVehicleByIdAsync(vehicleId);
 
             return vehicle == null ? NotFound() : Ok(vehicle);
         }
@@ -73,7 +73,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// </summary>
         /// <param name="vehicle">vehicle.</param>
         /// <returns>NoContent.</returns>
-        [HttpPut("editar")]
+        [HttpPut("edit")]
         public async Task<IActionResult> PutVehicle(VehicleDto vehicle)
         {
             ArgumentNullException.ThrowIfNull(vehicle);
@@ -101,7 +101,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// </summary>
         /// <param name="vehicleId">vehicle.</param>
         /// <returns>NoContent.</returns>
-        [HttpDelete("eliminar/{vehicleId}")]
+        [HttpDelete("delete/{vehicleId}")]
         public async Task<IActionResult> DeleteVehicle(int vehicleId)
         {
             await _vehicleMapperPort.DeleteVehicleAsync(vehicleId);

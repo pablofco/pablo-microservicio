@@ -33,8 +33,8 @@ namespace GtMotive.Estimate.Microservice.FunctionalTests.DataTest
         {
             return new List<Vehicle>
            {
-               new() { VehicleId = 1, NumberId = "VH001", Color = Colors.Red, Ports = Ports.Three, AdquisitionDate = DateTime.Parse("2015/05/10", new CultureInfo("es-ES")), Active = true },
-               new() { VehicleId = 2, NumberId = "VH002", Color = Colors.Blue, Ports = Ports.Five, AdquisitionDate = DateTime.Parse("2025/02/12", new CultureInfo("es-ES")), Active = true }
+               new() { VehicleId = 1, NumberId = "3729-FDS", Color = Colors.Purple, Doors = Doors.Three, AdquisitionDate = DateTime.Parse("2015/07/10", new CultureInfo("es-ES")), Active = true },
+               new() { VehicleId = 2, NumberId = "0445-BCV", Color = Colors.Pink, Doors = Doors.Five, AdquisitionDate = DateTime.Parse("2023/06/03", new CultureInfo("es-ES")), Active = true }
            };
         }
 
@@ -46,9 +46,9 @@ namespace GtMotive.Estimate.Microservice.FunctionalTests.DataTest
         {
             return new List<Renting>
            {
-               new() { RentingId = 1, CustomerId = 1, VehicleId = 1, DateStart = DateTime.Parse("2025/07/12", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/07/18", new CultureInfo("es-ES")), Price = 240, DateEndReal = DateTime.Parse("2025/07/18", new CultureInfo("es-ES")), PriceReal = 240 },
+               new() { RentingId = 1, CustomerId = 1, VehicleId = 1, DateStart = DateTime.Parse("2025/07/12", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/07/18", new CultureInfo("es-ES")), Price = 240 },
                new() { RentingId = 2, CustomerId = 2, VehicleId = 2, DateStart = DateTime.Parse("2025/08/08", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/08/10", new CultureInfo("es-ES")), Price = 80 },
-               new() { RentingId = 3, CustomerId = 3, VehicleId = 2, DateStart = DateTime.Parse("2025/07/20", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/07/24", new CultureInfo("es-ES")), Price = 160, DateEndReal = DateTime.Parse("2025/07/25", new CultureInfo("es-ES")), PriceReal = 200 }
+               new() { RentingId = 3, CustomerId = 3, VehicleId = 2, DateStart = DateTime.Parse("2025/07/20", new CultureInfo("es-ES")), DateEnd = DateTime.Parse("2025/07/24", new CultureInfo("es-ES")), Price = 160 }
            };
         }
 

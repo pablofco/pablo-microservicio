@@ -66,22 +66,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         }
 
         /// <inheritdoc/>
-        public async Task UpdateVehiclesAsync(IList<VehicleDto> vehiclesDto)
-        {
-            var vehicles = AdapterHelper.ConvertToList<VehicleDto, Vehicle>(_mapper, vehiclesDto);
-            await _vehicleRepository.UpdateVehiclesAsync(vehicles);
-        }
-
-        /// <inheritdoc/>
-        public async Task<VehicleDto> UpdateVehicleByIdToActiveAsync(int vehicleId)
-        {
-            var vehicle = await _vehicleRepository.UpdateVehicleByIdToActiveAsync(vehicleId);
-            var vehicleDtoUpdated = AdapterHelper.ConvertToDto<Vehicle, VehicleDto>(_mapper, vehicle);
-
-            return vehicleDtoUpdated;
-        }
-
-        /// <inheritdoc/>
         public async Task<List<VehicleDto>> UpdateVehiclesToNoActiveAsync()
         {
             var vehicles = await _vehicleRepository.UpdateVehiclesToNoActiveAsync();
@@ -94,18 +78,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         public async Task DeleteVehicleAsync(int vehicleId)
         {
             await _vehicleRepository.DeleteVehicleAsync(vehicleId);
-        }
-
-        /// <inheritdoc/>
-        public bool ValidateColor(VehicleDto vehicleDto)
-        {
-            return AdapterHelper.ValidateColor(vehicleDto);
-        }
-
-        /// <inheritdoc/>
-        public bool ValidatePort(VehicleDto vehicleDto)
-        {
-            return AdapterHelper.ValidatePort(vehicleDto);
         }
     }
 }

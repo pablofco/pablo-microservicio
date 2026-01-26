@@ -35,7 +35,7 @@ namespace GtMotive.Estimate.Microservice.Domain.Services
         /// <returns>true or false if exist color.</returns>
         public bool ValidatePort(Vehicle vehicleDto)
         {
-            var ports = Enum.GetValues<Ports>()
+            var doors = Enum.GetValues<Doors>()
                                     .Select(dt => new
                                     {
                                         Id = (int)dt,
@@ -43,7 +43,7 @@ namespace GtMotive.Estimate.Microservice.Domain.Services
                                     })
                                     .ToList();
 
-            return ports.Any(dt => (int)vehicleDto.Ports == dt.Id);
+            return doors.Any(dt => (int)vehicleDto.Doors == dt.Id);
         }
 
         /// <summary>

@@ -51,13 +51,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories
         Task UpdateVehiclesAsync(IList<Vehicle> vehicles);
 
         /// <summary>
-        /// Update Vehicle to Active in the fleet. <see cref="Vehicle"/>.
-        /// </summary>
-        /// <param name="vehicleId">The unique identifier of the vehicle to be deleted.</param>
-        /// <returns>Vehicle.</returns>
-        Task<Vehicle> UpdateVehicleByIdToActiveAsync(int vehicleId);
-
-        /// <summary>
         /// Update Vehicle to no Active in the fleet <see cref="Vehicle"/>.
         /// </summary>
         /// <returns>list of vehicles that will be updated to no active in the fleet.</returns>

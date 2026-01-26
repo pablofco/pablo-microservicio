@@ -14,16 +14,13 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Rentings
     /// Constructor.
     /// </remarks>
     /// <param name="rentingMapperPort">renting.</param>
-    /// /// <param name="vehicleMapperPort">vehicle.</param>
-    /// <param name="customerMapperPort">customer.</param>
+    /// <param name="vehicleMapperPort">vehicle.</param>
     public class EditRentingUseCaseOutput(
         IRentingMapperPort rentingMapperPort,
-        IVehicleMapperPort vehicleMapperPort,
-        ICustomerMapperPort customerMapperPort) : IRentingUseCaseOutput<EditRentingUseCaseOutput>
+        IVehicleMapperPort vehicleMapperPort) : IRentingUseCaseOutput<EditRentingUseCaseOutput>
     {
         private readonly IRentingMapperPort _rentingMapperPort = rentingMapperPort;
         private readonly IVehicleMapperPort _vehicleMapperPort = vehicleMapperPort;
-        private readonly ICustomerMapperPort _customerMapperPort = customerMapperPort;
 
         /// <summary>
         /// ExecuteAsync.
@@ -36,30 +33,22 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Rentings
 
             var renting = new Renting
             {
-                RentingId = rentingDto.VehicleId,
+                RentingId = rentingDto.RentingId,
                 DateStart = rentingDto.DateStart,
                 DateEnd = rentingDto.DateEnd,
                 CustomerId = rentingDto.CustomerId,
                 VehicleId = rentingDto.VehicleId
             };
 
-            if (await _customerMapperPort.GetCustomerByIdAsync(renting.CustomerId) == null)
+            await _vehicleMapperPort.UpdateVehiclesToNoActiveAsync();
+
+            var rentingUpdate = await _rentingMapperPort.GetRentingByIdAsync(renting.RentingId);
+            if (rentingUpdate == null)
             {
-                return ($"Customer with ID {renting.CustomerId} not found.", null);
+                return ($"This renting not exist {rentingUpdate.RentingId} not found.", null);
             }
 
-            if (await _vehicleMapperPort.GetVehicleByIdAsync(renting.VehicleId) == null)
-            {
-                return ($"Vehicle with ID {renting.VehicleId} not found.", null);
-            }
-
-            var (result, message) = _rentingMapperPort.ValidateRentingDates(renting.DateStart, renting.DateEnd);
-            if (!result)
-            {
-                return (message, null);
-            }
-
-            rentingDto = await _rentingMapperPort.UpdateRentingAsync(rentingDto);
+            await _rentingMapperPort.UpdateRentingCloseAsync(renting.RentingId, renting.DateEnd);
 
             return ("Ok", rentingDto);
         }

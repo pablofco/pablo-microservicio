@@ -1,9 +1,9 @@
 ﻿namespace GtMotive.Estimate.Microservice.Domain.Enums
 {
     /// <summary>
-    /// Enum Ports.
+    /// Enum Doors.
     /// </summary>
-    public enum Ports
+    public enum Doors
     {
         /// <summary>
         /// Red Color.

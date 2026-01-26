@@ -66,14 +66,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<Vehicle> UpdateVehicleByIdToActiveAsync(int vehicleId)
-        {
-            var vehicle = await _rentingDbContext.Vehicles.Where(v => v.VehicleId == vehicleId).FirstOrDefaultAsync();
-            vehicle.Active = true;
-            return await UpdateVehicleAsync(vehicle);
-        }
-
-        /// <inheritdoc/>
         public async Task<List<Vehicle>> UpdateVehiclesToNoActiveAsync()
         {
             var parameters = await _parameterRepository.GetParametersAsync();

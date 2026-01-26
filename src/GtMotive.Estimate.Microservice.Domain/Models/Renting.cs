@@ -31,16 +31,6 @@ namespace GtMotive.Estimate.Microservice.Domain.Models
         public double Price { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the DateEndReal of the renting.
-        /// </summary>
-        public DateTime? DateEndReal { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the PriceReal with DateEndReal of the renting.
-        /// </summary>
-        public double? PriceReal { get; set; }
-
-        /// <summary>
         /// Gets or sets the CustomerId.
         /// </summary>
         [ForeignKey("CustomerId")]

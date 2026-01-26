@@ -32,19 +32,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
         RentingDto ConvertDtoToRenting(RentingNewDto rentingNewDto);
 
         /// <summary>
-        /// Get the list of Rentings where they are still alive (dont return vehicle) <see cref="Renting"/>.
-        /// </summary>
-        /// <returns>list of Rentings.</returns>
-        Task<List<RentingCustomerVehicleDto>> GetStillAliveAsync();
-
-        /// <summary>
-        /// Get one Renting where they are still alive (dont return vehicle) <see cref="Renting"/>.
-        /// </summary>
-        /// <param name="customerId">rentingId.</param>
-        /// <returns>list of Rentings.</returns>
-        Task<List<RentingCustomerVehicleDto>> GetRentingStillAliveByCustomerIdAsync(int customerId);
-
-        /// <summary>
         /// Get one Renting where they are still active and dont return vehicle <see cref="Renting"/>.
         /// </summary>
         /// <param name="vehicleId">rentingId.</param>
@@ -62,21 +49,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
         /// </summary>
         /// <returns>list of Rentings.</returns>
         Task<List<RentingCustomerVehicleDto>> GetRentingsVehicleNoActiveAsync();
-
-        /// <summary>
-        /// Get list of Rentings where date is between dateStart and dateEnd. <see cref="Renting"/>.
-        /// </summary>
-        /// <param name="dateBetween">date between start and end of renting.</param>
-        /// <returns>list of Rentings.</returns>
-        Task<List<RentingCustomerVehicleDto>> GetRentingsDatesBetweenAsync(DateTime dateBetween);
-
-        /// <summary>
-        /// Get list of Rentings per customerId where date is more or equals to input date <see cref="Renting"/>.
-        /// </summary>
-        /// <param name="customerId">The unique identifier of the renting to be deleted.</param>
-        /// <param name="dateBetween">date between start and end of renting.</param>
-        /// <returns>list of Rentings.</returns>
-        Task<List<RentingCustomerVehicleDto>> GetRentingsByCustomerIdDatesBetweenAsync(int customerId, DateTime dateBetween);
 
         /// <summary>
         /// Add Renting <see cref="Renting"/>.
@@ -108,27 +80,12 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
         Task DeleteRentingAsync(int rentingId);
 
         /// <summary>
-        /// Validate if exist rentings live per Customer <see cref="Renting"/>.
-        /// </summary>
-        /// <param name="customerId">customerId.</param>
-        /// <returns>(bool resultStillAlive, List entingsId).</returns>
-        Task<(bool ResultStillAlive, List<int> RentingsId)> ValidateRentingStillAliveAsync(int customerId);
-
-        /// <summary>
-        /// ValidateRentingDates.
-        /// </summary>
-        /// <param name="dateStart">dateStart.</param>
-        /// <param name="dateEnd">dateEnd.</param>
-        /// <returns>(bool result, string message).</returns>
-        (bool Result, string Message) ValidateRentingDates(DateTime dateStart, DateTime? dateEnd);
-
-        /// <summary>
         /// ValidateRentingDates.
         /// </summary>
         /// <param name="vehicleId">vehicleId.</param>
         /// <param name="dateStart">dateStart.</param>
         /// <returns>(bool result, string message).</returns>
-        Task<(bool Result, string Message)> ValidateCanRentingWithVehicleIdAsync(int vehicleId, DateTime dateStart);
+        Task<List<Renting>> ValidateCanRentingWithVehicleIdAsync(int vehicleId, DateTime dateStart);
 
         /// <summary>
         /// GetPrice.

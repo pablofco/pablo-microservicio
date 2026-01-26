@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
 {
     [DbContext(typeof(HexagonalDbContext))]
-    [Migration("20260120125804_Inicio")]
-    partial class Inicio
+    [Migration("20260126161306_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,16 +130,10 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
                     b.Property<DateTime>("DateEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateEndReal")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("DateStart")
                         .HasColumnType("datetime2");
 
                     b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("PriceReal")
                         .HasColumnType("float");
 
                     b.Property<int>("VehicleId")
@@ -159,10 +153,8 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
                             RentingId = 1,
                             CustomerId = 1,
                             DateEnd = new DateTime(2025, 7, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateEndReal = new DateTime(2025, 7, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateStart = new DateTime(2025, 7, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Price = 240.0,
-                            PriceReal = 240.0,
                             VehicleId = 1
                         },
                         new
@@ -179,10 +171,8 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
                             RentingId = 3,
                             CustomerId = 3,
                             DateEnd = new DateTime(2025, 7, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateEndReal = new DateTime(2025, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateStart = new DateTime(2025, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Price = 160.0,
-                            PriceReal = 200.0,
                             VehicleId = 2
                         });
                 });
@@ -204,11 +194,11 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
                     b.Property<int>("Color")
                         .HasColumnType("int");
 
+                    b.Property<int>("Doors")
+                        .HasColumnType("int");
+
                     b.Property<string>("NumberId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Ports")
-                        .HasColumnType("int");
 
                     b.HasKey("VehicleId");
 
@@ -223,19 +213,28 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Migrations
                         {
                             VehicleId = 1,
                             Active = true,
-                            AdquisitionDate = new DateTime(2015, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Color = 1,
-                            NumberId = "VH001",
-                            Ports = 3
+                            AdquisitionDate = new DateTime(2025, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Color = 2,
+                            Doors = 3,
+                            NumberId = "3729-FDS"
                         },
                         new
                         {
                             VehicleId = 2,
                             Active = true,
                             AdquisitionDate = new DateTime(2025, 2, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Color = 2,
-                            NumberId = "VH002",
-                            Ports = 5
+                            Color = 3,
+                            Doors = 5,
+                            NumberId = "0445-BCV"
+                        },
+                        new
+                        {
+                            VehicleId = 3,
+                            Active = true,
+                            AdquisitionDate = new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Color = 1,
+                            Doors = 5,
+                            NumberId = "6647-CSM"
                         });
                 });
 
