@@ -45,36 +45,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<List<Customer>> GetCustomersWithRentingsAndVehicleActive()
-        {
-            return await _rentingDbContext.Customers
-                                        .Include(c => c.Rentings)
-                                        .ThenInclude(v => v.Vehicle)
-                                        .Where(c => c.Rentings.Any(r => r.Vehicle.Active))
-                                        .ToListAsync();
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<Customer>> GetCustomersWithRentingsAndVehicleNoActiveAsync()
-        {
-            return await _rentingDbContext.Customers
-                                        .Include(c => c.Rentings)
-                                        .ThenInclude(v => v.Vehicle)
-                                        .Where(c => c.Rentings.Any(r => !r.Vehicle.Active))
-                                        .ToListAsync();
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<Customer>> GetCustomersWithRentingsAndVehicleNoReturnYet()
-        {
-            return await _rentingDbContext.Customers
-                                        .Include(c => c.Rentings)
-                                        .ThenInclude(v => v.Vehicle)
-                                        .Where(c => c.Rentings.Any(r => r.DateEndReal == null))
-                                        .ToListAsync();
-        }
-
-        /// <inheritdoc/>
         public async Task<Customer> AddCustomerAsync(Customer customer)
         {
             await _rentingDbContext.Customers.AddAsync(customer);

@@ -36,24 +36,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories
         Task<List<Customer>> GetCustomersWithRentingsAsync();
 
         /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is still active in the fleet <see cref="Customer"/>.
-        /// </summary>
-        /// <returns>list of Customer.</returns>
-        Task<List<Customer>> GetCustomersWithRentingsAndVehicleActive();
-
-        /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is not active in the fleet <see cref="Customer"/>.
-        /// </summary>
-        /// <returns>list of Customer.</returns>
-        Task<List<Customer>> GetCustomersWithRentingsAndVehicleNoActiveAsync();
-
-        /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is not return yet <see cref="Customer"/>.
-        /// </summary>
-        /// <returns>list of Customer.</returns>
-        Task<List<Customer>> GetCustomersWithRentingsAndVehicleNoReturnYet();
-
-        /// <summary>
         /// Add Customer <see cref="Customer"/>.
         /// </summary>
         /// <param name="customer">The unique identifier of the customer to be deleted.</param>

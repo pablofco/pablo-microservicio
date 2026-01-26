@@ -37,24 +37,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
         Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAsync();
 
         /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is still active in the fleet <see cref="Customer"/>.
-        /// </summary>
-        /// <returns>list of Customer.</returns>
-        Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleActiveAsync();
-
-        /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is not active in the fleet <see cref="Customer"/>.
-        /// </summary>
-        /// <returns>list of Customer.</returns>
-        Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleNoActiveAsync();
-
-        /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is not return yet <see cref="Customer"/>.
-        /// </summary>
-        /// <returns>list of Customer.</returns>
-        Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleNoReturnYetAsync();
-
-        /// <summary>
         /// Add Customer <see cref="Customer"/>.
         /// </summary>
         /// <param name="customerDto">The unique identifier of the customer to be deleted.</param>
@@ -74,12 +56,5 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
         /// <param name="customerId">The unique identifier of the customer to be deleted.</param>
         /// <returns>task.</returns>
         Task DeleteCustomerAsync(int customerId);
-
-        /// <summary>
-        /// ValidateDocumentType.
-        /// </summary>
-        /// <param name="customerDto">customerDto.</param>
-        /// <returns>true or false if exist  documentType.</returns>
-        bool ValidateDocumentType(CustomerDto customerDto);
     }
 }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Rentings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,12 +11,12 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public sealed class RentingsController(IRentingMapperPort rentingMapperPort,
-        ICustomerMapperPort customerMapperPort,
-        IVehicleMapperPort vehicleMapperPort) : ControllerBase
+        IRentingUseCaseOutput<CreateRentingUseCaseOutput> createRentingUseCase,
+        IRentingUseCaseOutput<EditRentingUseCaseOutput> editRentingUseCase) : ControllerBase
     {
         private readonly IRentingMapperPort _rentingMapperPort = rentingMapperPort;
-        private readonly ICustomerMapperPort _customerMapperPort = customerMapperPort;
-        private readonly IVehicleMapperPort _vehicleMapperPort = vehicleMapperPort;
+        private readonly IRentingUseCaseOutput<CreateRentingUseCaseOutput> _createRentingUseCase = createRentingUseCase;
+        private readonly IRentingUseCaseOutput<EditRentingUseCaseOutput> _editRentingUseCase = editRentingUseCase;
 
         /// <summary>
         /// Get the list of all rentings.
@@ -30,12 +31,12 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// <summary>
         /// Get one Renting.
         /// </summary>
-        /// <param name="rentingId">id of renting.</param>
+        /// <param name="rentId">id of renting.</param>
         /// <returns>Renting.</returns>
-        [HttpGet("renting/{rentingId}")]
-        public async Task<IActionResult> GetRenting(int rentingId)
+        [HttpGet("renting/{rentId}")]
+        public async Task<IActionResult> GetRenting(int rentId)
         {
-            var renting = await _rentingMapperPort.GetRentingByIdAsync(rentingId);
+            var renting = await _rentingMapperPort.GetRentingByIdAsync(rentId);
 
             return renting == null ? NotFound() : Ok(renting);
         }
@@ -44,7 +45,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// Get the list of Rentings that have vehicles no return yet..
         /// </summary>
         /// <returns>list of Rentings.</returns>
-        [HttpGet("alive")]
+        [HttpGet("alquilados")]
         public async Task<IActionResult> GetRentingsWithVehicleNoReturnYetAsync()
         {
             var rentings = await _rentingMapperPort.GetStillAliveAsync();
@@ -53,108 +54,30 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         }
 
         /// <summary>
-        /// Get the list of Rentings where vehicles are active in the fleet.
-        /// </summary>
-        /// <returns>list of Rentings.</returns>
-        [HttpGet("vehicleactive")]
-        public async Task<IActionResult> GetRentingsVehicleActive()
-        {
-            var rentings = await _rentingMapperPort.GetRentingsVehicleActiveAsync();
-
-            return Ok(rentings);
-        }
-
-        /// <summary>
-        /// Get list of Rentings where vehicles are no active in the fleet.
-        /// </summary>
-        /// <returns>list of Rentings.</returns>
-        [HttpGet("vehiclenoactive")]
-        public async Task<IActionResult> GetRentingsVehicleNoActive()
-        {
-            var rentings = await _rentingMapperPort.GetRentingsVehicleNoActiveAsync();
-
-            return Ok(rentings);
-        }
-
-        /// <summary>
-        /// Get list of Rentings where date is between dateStart and dateEnd.
-        /// </summary>
-        /// <param name="dateBetween">date between start and end of renting.</param>
-        /// <returns>list of Rentings.</returns>
-        [HttpGet("datesbetween/{dateBetween}")]
-        public async Task<IActionResult> GetRentingsDatesBetween(DateTime dateBetween)
-        {
-            var rentings = await _rentingMapperPort.GetRentingsDatesBetweenAsync(dateBetween);
-
-            return Ok(rentings);
-        }
-
-        /// <summary>
-        /// Get list of Rentings per customerId where date is more or equals to input date.
-        /// </summary>
-        /// <param name="customerId">customerId.</param>
-        /// <param name="date">dateStart.</param>
-        /// <returns>list of Rentings.</returns>
-        [HttpGet("renting/customer/{customerId}/datesbetween/{date}")]
-        public async Task<IActionResult> GetRentingsByCustomerIdDatesBetween(int customerId, DateTime date)
-        {
-            var rentings = await _rentingMapperPort.GetRentingsByCustomerIdDatesBetweenAsync(customerId, date);
-
-            return Ok(rentings);
-        }
-
-        /// <summary>
         /// PostRenting, Add Renting.
         /// </summary>
-        /// <param name="rentingNew">renting.</param>
+        /// <param name="renting">renting.</param>
         /// <returns>Create Renting.</returns>
-        [HttpPost]
-        public async Task<IActionResult> PostRenting([FromBody] RentingNewDto rentingNew)
+        [HttpPost("add")]
+        public async Task<IActionResult> PostRenting([FromBody] RentingDto renting)
         {
-            if (rentingNew == null)
-            {
-                return NotFound();
-            }
-
-            if (await _customerMapperPort.GetCustomerByIdAsync(rentingNew.CustomerId) == null)
-            {
-                return NotFound($"Customer with ID {rentingNew.CustomerId} not found.");
-            }
-
-            if (await _vehicleMapperPort.GetVehicleByIdAsync(rentingNew.VehicleId) == null)
-            {
-                return NotFound($"Vehicle with ID {rentingNew.VehicleId} not found.");
-            }
-
-            var (result, message) = _rentingMapperPort.ValidateRentingDates(rentingNew.DateStart, rentingNew.DateEnd);
-            if (!result)
-            {
-                return BadRequest(message);
-            }
-
-            var (resultStillAlive, rentingsId) = await _rentingMapperPort.ValidateRentingStillAliveAsync(rentingNew.CustomerId);
-            if (resultStillAlive)
-            {
-                return BadRequest($"This Customer has another renting alive CustomerId:{rentingNew.CustomerId}, RentingId:{string.Join(" - ", rentingsId)}");
-            }
-
-            var (resultVehicle, messageVehicle) = await _rentingMapperPort.ValidateCanRentingWithVehicleIdAsync(rentingNew.VehicleId, rentingNew.DateStart);
-            if (!resultVehicle)
-            {
-                return BadRequest($"{messageVehicle}");
-            }
+            ArgumentNullException.ThrowIfNull(renting);
 
             try
             {
-                var renting = _rentingMapperPort.ConvertDtoToRenting(rentingNew);
-                renting.Price = await _rentingMapperPort.GetPrice(rentingNew.DateStart, rentingNew.DateEnd);
-
-                renting = await _rentingMapperPort.AddRentingAsync(renting);
-                return CreatedAtAction(nameof(GetRenting), new { rentingId = rentingNew.RentingId }, renting);
+                var (message, model) = await _createRentingUseCase.ExecuteAsync(renting);
+                if (message != "Ok")
+                {
+                    return BadRequest(message);
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetRenting), new { rentingId = renting.RentingId }, model);
+                }
             }
             catch (DbUpdateException ex)
             {
-                return BadRequest($"An error occurred while adding the renting. {ex.Message}");
+                return BadRequest(_createRentingUseCase.HandleError(ex.Message));
             }
         }
 
@@ -166,36 +89,23 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpPut("NoActive")]
         public async Task<IActionResult> PutRenting(RentingDto renting)
         {
-            if (renting == null)
-            {
-                return NotFound();
-            }
-
-            if (await _customerMapperPort.GetCustomerByIdAsync(renting.CustomerId) == null)
-            {
-                return NotFound($"Customer with ID {renting.CustomerId} not found.");
-            }
-
-            if (await _vehicleMapperPort.GetVehicleByIdAsync(renting.VehicleId) == null)
-            {
-                return NotFound($"Vehicle with ID {renting.VehicleId} not found.");
-            }
-
-            var (result, message) = _rentingMapperPort.ValidateRentingDates(renting.DateStart, renting.DateEnd);
-            if (!result)
-            {
-                return BadRequest(message);
-            }
+            ArgumentNullException.ThrowIfNull(renting);
 
             try
             {
-                renting.Price = await _rentingMapperPort.GetPrice(renting.DateStart, renting.DateEnd);
-                renting = await _rentingMapperPort.UpdateRentingAsync(renting);
-                return Ok(renting);
+                var (message, model) = await _editRentingUseCase.ExecuteAsync(renting);
+                if (message != "Ok")
+                {
+                    return BadRequest(message);
+                }
+                else
+                {
+                    return Ok(model);
+                }
             }
             catch (DbUpdateException ex)
             {
-                return BadRequest($"An error occurred while updating the renting. {ex.Message}");
+                return BadRequest(_editRentingUseCase.HandleError(ex.Message));
             }
         }
 

@@ -55,33 +55,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         }
 
         /// <inheritdoc/>
-        public async Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleActiveAsync()
-        {
-            var customers = await _customerRepository.GetCustomersWithRentingsAndVehicleActive();
-            var customersWithRentingsAndVehicleActiveFleetDto = AdapterHelper.ConvertToList<Customer, CustomerRentingsDto>(_mapper, customers);
-
-            return (List<CustomerRentingsDto>)customersWithRentingsAndVehicleActiveFleetDto;
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleNoActiveAsync()
-        {
-            var customers = await _customerRepository.GetCustomersWithRentingsAndVehicleNoActiveAsync();
-            var customersWithRentingsAndVehicleNoActiveFleetDto = AdapterHelper.ConvertToList<Customer, CustomerRentingsDto>(_mapper, customers);
-
-            return (List<CustomerRentingsDto>)customersWithRentingsAndVehicleNoActiveFleetDto;
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<CustomerRentingsDto>> GetCustomersWithRentingsAndVehicleNoReturnYetAsync()
-        {
-            var customers = await _customerRepository.GetCustomersWithRentingsAndVehicleNoReturnYet();
-            var customersWithRentingsAndVehicleNoReturnYetDto = AdapterHelper.ConvertToList<Customer, CustomerRentingsDto>(_mapper, customers);
-
-            return (List<CustomerRentingsDto>)customersWithRentingsAndVehicleNoReturnYetDto;
-        }
-
-        /// <inheritdoc/>
         public async Task<CustomerDto> AddCustomerAsync(CustomerDto customerDto)
         {
             var customer = AdapterHelper.ConvertToEntity<CustomerDto, Customer>(_mapper, customerDto);
@@ -105,12 +78,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         public async Task DeleteCustomerAsync(int customerId)
         {
             await _customerRepository.DeleteCustomerAsync(customerId);
-        }
-
-        /// <inheritdoc/>
-        public bool ValidateDocumentType(CustomerDto customerDto)
-        {
-            return AdapterHelper.ValidateDocumentType(customerDto);
         }
     }
 }

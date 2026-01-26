@@ -1,7 +1,8 @@
-﻿using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Vehicles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,15 +10,18 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class VehiclesController(IVehicleMapperPort vehicleMapperPort) : ControllerBase
+    public sealed class VehiclesController(IVehicleMapperPort vehicleMapperPort, IVehicleUseCaseOutput<CreateVehicleUseCaseOutput> createVehiclesUseCase,
+        IVehicleUseCaseOutput<EditVehicleUseCaseOutput> editVehicleUseCase) : ControllerBase
     {
         private readonly IVehicleMapperPort _vehicleMapperPort = vehicleMapperPort;
+        private readonly IVehicleUseCaseOutput<CreateVehicleUseCaseOutput> _createVehiclesUseCase = createVehiclesUseCase;
+        private readonly IVehicleUseCaseOutput<EditVehicleUseCaseOutput> _editVehicleUseCase = editVehicleUseCase;
 
         /// <summary>
         /// Get the list of all Vehicles.
         /// </summary>
         /// <returns>list of Vehicles.</returns>
-        [HttpGet("all")]
+        [HttpGet("todos")]
         public async Task<IActionResult> GetVehicles()
         {
             return Ok(await _vehicleMapperPort.GetVehiclesAllAsync());
@@ -26,12 +30,12 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// <summary>
         /// Get one Vehicle.
         /// </summary>
-        /// <param name="vehicleId">id of Vehicle.</param>
+        /// <param name="vehiculoId">id of Vehicle.</param>
         /// <returns>Vehicle.</returns>
-        [HttpGet("vehicle/{vehicleId}")]
-        public async Task<IActionResult> GetVehicle(int vehicleId)
+        [HttpGet("vehiculo/{vehiculoId}")]
+        public async Task<IActionResult> GetVehicle(int vehiculoId)
         {
-            var vehicle = await _vehicleMapperPort.GetVehicleByIdAsync(vehicleId);
+            var vehicle = await _vehicleMapperPort.GetVehicleByIdAsync(vehiculoId);
 
             return vehicle == null ? NotFound() : Ok(vehicle);
         }
@@ -44,34 +48,23 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> PostVehicle(VehicleDto vehicle)
         {
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
-
-            if (!_vehicleMapperPort.ValidateColor(vehicle))
-            {
-                return BadRequest($"Invalid Color:{vehicle.Color}. Have to be: Red = 1, Blue = 2, Green = 3.");
-            }
-
-            if (!_vehicleMapperPort.ValidatePort(vehicle))
-            {
-                return BadRequest($"Invalid Port:{vehicle.Ports}. Have to be: Three = 3, Five = 5.");
-            }
-
-            if (await _vehicleMapperPort.GetVehicleByNumberIdAsync(vehicle.NumberId) != null)
-            {
-                return BadRequest($"Vehicle already exist {vehicle.NumberId}.");
-            }
+            ArgumentNullException.ThrowIfNull(vehicle);
 
             try
             {
-                vehicle = await _vehicleMapperPort.AddVehicleAsync(vehicle);
-                return CreatedAtAction(nameof(GetVehicle), new { vehicleId = vehicle.VehicleId }, vehicle);
+                var (message, model) = await _createVehiclesUseCase.ExecuteAsync(vehicle);
+                if (message != "Ok")
+                {
+                    return BadRequest(message);
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetVehicle), new { vehicleId = model.VehicleId }, model);
+                }
             }
             catch (DbUpdateException ex)
             {
-                return BadRequest($"An error occurred while adding the vehicle. {ex.Message}");
+                return BadRequest(_createVehiclesUseCase.HandleError(ex.Message));
             }
         }
 
@@ -80,94 +73,26 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// </summary>
         /// <param name="vehicle">vehicle.</param>
         /// <returns>NoContent.</returns>
-        [HttpPut("edit")]
+        [HttpPut("editar")]
         public async Task<IActionResult> PutVehicle(VehicleDto vehicle)
         {
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
-
-            if (await _vehicleMapperPort.GetVehicleByIdAsync(vehicle.VehicleId) == null)
-            {
-                return NotFound($"Vehicle with VehicleId:{vehicle.VehicleId} not found.");
-            }
-
-            if (!_vehicleMapperPort.ValidateColor(vehicle))
-            {
-                return BadRequest($"Invalid Color:{vehicle.Color}. Have to be: Red = 1, Blue = 2, Green = 3.");
-            }
-
-            if (!_vehicleMapperPort.ValidatePort(vehicle))
-            {
-                return BadRequest($"Invalid Port:{vehicle.Ports}. Have to be: Three = 3, Five = 5.");
-            }
-
-            if (await _vehicleMapperPort.GetVehicleByNumberIdAsync(vehicle.NumberId) != null)
-            {
-                return BadRequest($"Vehicle already exist {vehicle.NumberId}.");
-            }
-
-            var vehicleValidate = await _vehicleMapperPort.GetVehicleByNumberIdAsync(vehicle.NumberId);
-            if (vehicleValidate != null && vehicleValidate.VehicleId != vehicle.VehicleId)
-            {
-                return BadRequest($"Vehicle with NumberId:{vehicle.NumberId} and NumberId:{vehicle.NumberId} already exist in other VehicleId:{vehicleValidate.VehicleId}.");
-            }
+            ArgumentNullException.ThrowIfNull(vehicle);
 
             try
             {
-                vehicle = await _vehicleMapperPort.UpdateVehicleAsync(vehicle);
-                return Ok(vehicle);
+                var (message, model) = await _editVehicleUseCase.ExecuteAsync(vehicle);
+                if (message != "Ok")
+                {
+                    return BadRequest(message);
+                }
+                else
+                {
+                    return Ok(model);
+                }
             }
             catch (DbUpdateException ex)
             {
-                return BadRequest($"An error occurred while updating the vehicle. {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// PutVehicleActive, Active one Vehicle in the fleet.
-        /// </summary>
-        /// <param name="vehicleId">vehicle.</param>
-        /// <returns>NoContent.</returns>
-        [HttpPut("active/{vehicleId}")]
-        public async Task<IActionResult> PutVehicleActive(int vehicleId)
-        {
-            var vehicle = await _vehicleMapperPort.GetVehicleByIdAsync(vehicleId);
-            if (vehicle == null)
-            {
-                return NotFound($"Vehicle with VehicleId:{vehicle.VehicleId} not found.");
-            }
-
-            try
-            {
-                vehicle = await _vehicleMapperPort.UpdateVehicleByIdToActiveAsync(vehicleId);
-                return Ok(vehicle);
-            }
-            catch (DbUpdateException ex)
-            {
-                return BadRequest($"An error occurred while updating the vehicle to active. {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// PutVehiclesNoActive, No Active Vehicles in the fleet.
-        /// </summary>
-        /// <returns>NoContent.</returns>
-        [HttpPut("noactive")]
-        public async Task<IActionResult> PutVehiclesNoActive()
-        {
-            try
-            {
-                var vehicles = await _vehicleMapperPort.UpdateVehiclesToNoActiveAsync();
-
-                return vehicles == null || vehicles.Count == 0
-                    ? NotFound("No vehicles found to update to No active.")
-                    : Ok($"List of vehicles updated to no active: {string.Join(", ", vehicles.Select(v => v.VehicleId + "-" + v.NumberId).ToList())}");
-            }
-            catch (DbUpdateException ex)
-            {
-                return BadRequest($"An error occurred while updating the vehicles to No active. {ex.Message}");
+                return BadRequest(_editVehicleUseCase.HandleError(ex.Message));
             }
         }
 
@@ -176,7 +101,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// </summary>
         /// <param name="vehicleId">vehicle.</param>
         /// <returns>NoContent.</returns>
-        [HttpDelete("delete/{vehicleId}")]
+        [HttpDelete("eliminar/{vehicleId}")]
         public async Task<IActionResult> DeleteVehicle(int vehicleId)
         {
             await _vehicleMapperPort.DeleteVehicleAsync(vehicleId);

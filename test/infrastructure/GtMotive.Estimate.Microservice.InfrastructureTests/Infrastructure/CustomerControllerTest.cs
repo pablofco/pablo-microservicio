@@ -2,6 +2,7 @@
 using FluentAssertions;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Customers;
 using GtMotive.Estimate.Microservice.Host.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -24,11 +25,13 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
             // Arrange
             var customerId = 1;
             var mapperPortMock = new Mock<ICustomerMapperPort>();
+            var createCustomerUseCaseMock = new Mock<ICustomerUseCaseOutput<CreateCustomerUseCaseOutput>>();
+            var editCustomerUseCaseMock = new Mock<ICustomerUseCaseOutput<EditCustomerUseCaseOutput>>();
             mapperPortMock
                 .Setup(s => s.GetCustomerByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(new CustomerDto { CustomerId = 1 });
 
-            var controller = new CustomersController(mapperPortMock.Object);
+            var controller = new CustomersController(mapperPortMock.Object, createCustomerUseCaseMock.Object, editCustomerUseCaseMock.Object);
 
             // Act
             var result = await controller.GetCustomer(customerId);

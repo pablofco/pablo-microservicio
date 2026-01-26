@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Vehicles;
 using GtMotive.Estimate.Microservice.Host.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -27,6 +28,8 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
             var vehicleDto = fixture.Build<VehicleDto>().With(x => x.VehicleId, 0).Create();
             VehicleDto valueNull = null;
 
+            var createVehicleUseCaseMock = new Mock<IVehicleUseCaseOutput<CreateVehicleUseCaseOutput>>();
+            var editVehicleUseCaseMock = new Mock<IVehicleUseCaseOutput<EditVehicleUseCaseOutput>>();
             var mapperPortMock = new Mock<IVehicleMapperPort>();
             mapperPortMock
                 .Setup(s => s.ValidateColor(It.IsAny<VehicleDto>()))
@@ -46,7 +49,10 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
                 .Setup(s => s.AddVehicleAsync(It.IsAny<VehicleDto>()))
                 .ReturnsAsync(vehicleDto);
 
-            var controller = new VehiclesController(mapperPortMock.Object);
+            createVehicleUseCaseMock.Setup(s => s.ExecuteAsync(It.IsAny<VehicleDto>()))
+                .ReturnsAsync(("Ok", new VehicleDto { VehicleId = 50 }));
+
+            var controller = new VehiclesController(mapperPortMock.Object, createVehicleUseCaseMock.Object, editVehicleUseCaseMock.Object);
 
             // Act
             var result = await controller.PostVehicle(vehicleDto);
@@ -67,6 +73,8 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
             var vehicleDto = fixture.Build<VehicleDto>().With(x => x.VehicleId, 0).Create();
             VehicleDto valueNull = null;
 
+            var createVehicleUseCaseMock = new Mock<IVehicleUseCaseOutput<CreateVehicleUseCaseOutput>>();
+            var editVehicleUseCaseMock = new Mock<IVehicleUseCaseOutput<EditVehicleUseCaseOutput>>();
             var mapperPortMock = new Mock<IVehicleMapperPort>();
             mapperPortMock
                 .Setup(s => s.ValidateColor(It.IsAny<VehicleDto>()))
@@ -86,13 +94,18 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
                 .Setup(s => s.AddVehicleAsync(It.IsAny<VehicleDto>()))
                 .ReturnsAsync(vehicleDto);
 
-            var controller = new VehiclesController(mapperPortMock.Object);
+            createVehicleUseCaseMock.Setup(s => s.ExecuteAsync(It.IsAny<VehicleDto>()))
+                .ReturnsAsync(("Vehicle already exist 2884-FDS.", null));
+
+            var controller = new VehiclesController(mapperPortMock.Object, createVehicleUseCaseMock.Object, editVehicleUseCaseMock.Object);
 
             // Act
             var result = await controller.PostVehicle(vehicleDto);
 
             // Assert
             result.Should().BeOfType<BadRequestObjectResult>();
+            var badRequest = result as BadRequestObjectResult;
+            badRequest!.Value.Should().Be("Vehicle already exist 2884-FDS.");
         }
     }
 }

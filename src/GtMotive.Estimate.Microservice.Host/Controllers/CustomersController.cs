@@ -1,21 +1,22 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Customers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GtMotive.Estimate.Microservice.Host.Controllers
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CustomersController"/> class.
-    /// CustomersController.
-    /// </summary>
-    /// <param name="customerMapperPort">customerService.</param>
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class CustomersController(ICustomerMapperPort customerMapperPort) : ControllerBase
+    public sealed class CustomersController(ICustomerMapperPort customerMapperPort,
+            ICustomerUseCaseOutput<CreateCustomerUseCaseOutput> createCustomerUseCase,
+            ICustomerUseCaseOutput<EditCustomerUseCaseOutput> editCustomerUseCase) : ControllerBase
     {
         private readonly ICustomerMapperPort _customerMapperPort = customerMapperPort;
+        private readonly ICustomerUseCaseOutput<CreateCustomerUseCaseOutput> _createCustomerUseCase = createCustomerUseCase;
+        private readonly ICustomerUseCaseOutput<EditCustomerUseCaseOutput> _editCustomerUseCase = editCustomerUseCase;
 
         /// <summary>
         /// Get the list of all Customers.
@@ -44,46 +45,10 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// Get the list of Cutomers that have or had rentings.
         /// </summary>
         /// <returns>list of Cutomers.</returns>
-        [HttpGet("rentings")]
+        [HttpGet("customervehiclesrenting")]
         public async Task<IActionResult> GetCustomersWithRentings()
         {
             var customers = await _customerMapperPort.GetCustomersWithRentingsAsync();
-
-            return Ok(customers);
-        }
-
-        /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is still active in the fleet.
-        /// </summary>
-        /// <returns>list of customers.</returns>
-        [HttpGet("rentings/vehicleactive")]
-        public async Task<IActionResult> GetCustomersWithRentingsAndVehicleActive()
-        {
-            var customers = await _customerMapperPort.GetCustomersWithRentingsAndVehicleActiveAsync();
-
-            return Ok(customers);
-        }
-
-        /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is not active in the fleet.
-        /// </summary>
-        /// <returns>list of customers.</returns>
-        [HttpGet("rentings/vehiclenoactive")]
-        public async Task<IActionResult> GetCustomersWithRentingsAndVehicleNoActive()
-        {
-            var customers = await _customerMapperPort.GetCustomersWithRentingsAndVehicleNoActiveAsync();
-
-            return Ok(customers);
-        }
-
-        /// <summary>
-        /// Get the list of Customers that have rentings and vehicle is not return yet.
-        /// </summary>
-        /// <returns>list of customers.</returns>
-        [HttpGet("rentings/vehiclenoreturn")]
-        public async Task<IActionResult> GetCustomersWithRentingsAndVehicleNoReturnYet()
-        {
-            var customers = await _customerMapperPort.GetCustomersWithRentingsAndVehicleNoReturnYetAsync();
 
             return Ok(customers);
         }
@@ -96,29 +61,23 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> PostCustomer([FromBody] CustomerDto customer)
         {
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            if (!_customerMapperPort.ValidateDocumentType(customer))
-            {
-                return BadRequest($"Invalid DocumentType:{customer.DocumentType}. Have to be: DNI = 1, Passport = 2.");
-            }
-
-            if (await _customerMapperPort.GetCustomerByDocumentAsync(customer.Document) != null)
-            {
-                return BadRequest($"Customer with Document Number:{customer.Document}, already exist.");
-            }
+            ArgumentNullException.ThrowIfNull(customer);
 
             try
             {
-                customer = await _customerMapperPort.AddCustomerAsync(customer);
-                return CreatedAtAction(nameof(GetCustomer), new { customerId = customer.CustomerId }, customer);
+                var (message, model) = await _createCustomerUseCase.ExecuteAsync(customer);
+                if (message != "Ok")
+                {
+                    return BadRequest(message);
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetCustomer), new { customerId = customer.CustomerId }, model);
+                }
             }
             catch (DbUpdateException ex)
             {
-                return BadRequest($"An error occurred while adding the customer. {ex.Message}");
+                return BadRequest(_createCustomerUseCase.HandleError(ex.Message));
             }
         }
 
@@ -130,35 +89,23 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         [HttpPut("edit")]
         public async Task<IActionResult> PutCustomer([FromBody] CustomerDto customer)
         {
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            if (await _customerMapperPort.GetCustomerByIdAsync(customer.CustomerId) == null)
-            {
-                return NotFound($"Customer with CustomerId:{customer.CustomerId} not found.");
-            }
-
-            if (!_customerMapperPort.ValidateDocumentType(customer))
-            {
-                return BadRequest($"Invalid document type {customer.DocumentType}. Have to be: DNI = 1, Passport = 2.");
-            }
-
-            var customerValidate = await _customerMapperPort.GetCustomerByDocumentAsync(customer.Document);
-            if (customerValidate != null && customerValidate.CustomerId != customer.CustomerId)
-            {
-                return BadRequest($"Customer with Document:{customer.Document} and CustomerId:{customer.CustomerId} already exist in other CustomerId:{customerValidate.CustomerId}.");
-            }
+            ArgumentNullException.ThrowIfNull(customer);
 
             try
             {
-                customer = await _customerMapperPort.UpdateCustomerAsync(customer);
-                return Ok(customer);
+                var (message, model) = await _editCustomerUseCase.ExecuteAsync(customer);
+                if (message != "Ok")
+                {
+                    return BadRequest(message);
+                }
+                else
+                {
+                    return Ok(model);
+                }
             }
             catch (DbUpdateException ex)
             {
-                return BadRequest($"An error occurred while updating the customer. {ex.Message}");
+                return BadRequest(_editCustomerUseCase.HandleError(ex.Message));
             }
         }
 

@@ -2,7 +2,11 @@
 using System.Diagnostics.CodeAnalysis;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Customers;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Rentings;
+using GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Vehicles;
 using GtMotive.Estimate.Microservice.Domain.Interfaces;
+using GtMotive.Estimate.Microservice.Domain.Services;
 using GtMotive.Estimate.Microservice.Infrastructure.Adapters;
 using GtMotive.Estimate.Microservice.Infrastructure.Interfaces;
 using GtMotive.Estimate.Microservice.Infrastructure.Logging;
@@ -30,6 +34,16 @@ namespace GtMotive.Estimate.Microservice.Infrastructure
             services.AddScoped<ICustomerMapperPort, CustomerMapper>();
             services.AddScoped<IRentingMapperPort, RentingMapper>();
             services.AddScoped<IParameterMapperPort, ParameterMapper>();
+            services.AddScoped<IRulesDomainService, RulesDomainService>();
+
+            services.AddScoped<IVehicleUseCaseOutput<CreateVehicleUseCaseOutput>, CreateVehicleUseCaseOutput>();
+            services.AddScoped<IVehicleUseCaseOutput<EditVehicleUseCaseOutput>, EditVehicleUseCaseOutput>();
+
+            services.AddScoped<ICustomerUseCaseOutput<CreateCustomerUseCaseOutput>, CreateCustomerUseCaseOutput>();
+            services.AddScoped<ICustomerUseCaseOutput<EditCustomerUseCaseOutput>, EditCustomerUseCaseOutput>();
+
+            services.AddScoped<IRentingUseCaseOutput<CreateRentingUseCaseOutput>, CreateRentingUseCaseOutput>();
+            services.AddScoped<IRentingUseCaseOutput<EditRentingUseCaseOutput>, EditRentingUseCaseOutput>();
 
             if (!isDevelopment)
             {
