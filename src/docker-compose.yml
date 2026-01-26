@@ -1,0 +1,36 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: hexagonal-sql
+    environment:
+      SA_PASSWORD: "GTMotive2026!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P GTMotive2026! -Q 'SELECT 1'"]
+      interval: 10s
+      retries: 10
+
+  gtmotive.estimate.microservice.host:
+    image: ${DOCKER_REGISTRY-}gtmotiveestimatemicroservicehost
+    build:
+      context: .
+      dockerfile: GtMotive.Estimate.Microservice.Host/Dockerfile
+    container_name: hexagonal-api
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ConnectionStrings__HexagonalDb: "Server=sqlserver;Database=HexagonalDb;User Id=sa;Password=GTMotive2026!;TrustServerCertificate=True;"
+    ports:
+      - "8080:8080"
+
+volumes:
+  sql_data:
+
+
+
