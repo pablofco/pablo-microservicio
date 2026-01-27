@@ -108,6 +108,13 @@ builder.Services.AddSwagger(appSettings, builder.Configuration);
 
 var app = builder.Build();
 
+// Run Migration in Docker
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<HexagonalDbContext>();
+    db.Database.Migrate();
+}
+
 // Logging configuration.
 Log.Logger = builder.Environment.IsDevelopment() ?
     new LoggerConfiguration()

@@ -1,3 +1,6 @@
+# docker compose up -d --build
+# http://localhost:8080/swagger
+
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -10,9 +13,11 @@ services:
     volumes:
       - sql_data:/var/opt/mssql
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P GTMotive2026! -Q 'SELECT 1'"]
-      interval: 10s
-      retries: 10
+        test: ["CMD", "bash", "-c", "pgrep sqlservr"]
+        interval: 10s
+        timeout: 5s
+        retries: 10
+        start_period: 20s
 
   gtmotive.estimate.microservice.host:
     image: ${DOCKER_REGISTRY-}gtmotiveestimatemicroservicehost
@@ -25,7 +30,8 @@ services:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
-      ConnectionStrings__HexagonalDb: "Server=sqlserver;Database=HexagonalDb;User Id=sa;Password=GTMotive2026!;TrustServerCertificate=True;"
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__HexagonalDb: "Server=sqlserver,1433;Database=HexagonalDb;User Id=sa;Password=GTMotive2026!;Encrypt=False;TrustServerCertificate=True;"
     ports:
       - "8080:8080"
 
