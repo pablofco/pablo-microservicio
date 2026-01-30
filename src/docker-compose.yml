@@ -2,6 +2,9 @@
 # docker compose up -d --build
 # http://localhost:8080/swagger
 # http://localhost:8080/swagger/v1.0.0.0/swagger.json
+# http://localhost:8080/api/vehicles/all
+# cd "C:\Users\Pablo\Desktop\Zip Pablo"
+
 
 # local
 # https://localhost:58410/swagger/index.html

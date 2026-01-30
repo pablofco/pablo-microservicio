@@ -98,8 +98,6 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         public async Task<RentingCustomerVehicleDto> UpdateRentingCloseAsync(int rentingId, DateTime dateEnd)
         {
             var rentingDto = await GetRentingByIdAsync(rentingId);
-            rentingDto.DateEndReal = dateEnd;
-            rentingDto.PriceReal = await GetPrice(rentingDto.DateStart, dateEnd);
 
             var renting = AdapterHelper.ConvertToEntity<RentingCustomerVehicleDto, Renting>(_mapper, rentingDto);
             renting = await _rentingRepository.UpdateRentingAsync(renting);
