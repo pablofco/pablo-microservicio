@@ -4,7 +4,8 @@
 # http://localhost:8080/swagger/v1.0.0.0/swagger.json
 # http://localhost:8080/api/vehicles/all
 # cd "C:\Users\Pablo\Desktop\Zip Pablo"
-
+# docker logs -f "Id del container"
+# docker logs -f hexagonal-api
 
 # local
 # https://localhost:58410/swagger/index.html
