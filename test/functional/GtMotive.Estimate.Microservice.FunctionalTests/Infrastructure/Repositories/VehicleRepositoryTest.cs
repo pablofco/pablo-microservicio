@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Models;
+using GtMotive.Estimate.Microservice.FunctionalTests.DataTest;
 using GtMotive.Estimate.Microservice.Infrastructure.Database;
 using GtMotive.Estimate.Microservice.Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
@@ -57,6 +59,7 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Repositories
                     // Assert
                     vehicles.Should().NotBeNull();
                     vehicles.Should().BeOfType<List<Vehicle>>();
+                    vehicles.Select(v => v.VehicleId).Should().Contain(Data.GetVehicles().Select(x => x.VehicleId).ToList());
                 }
             }
         }
