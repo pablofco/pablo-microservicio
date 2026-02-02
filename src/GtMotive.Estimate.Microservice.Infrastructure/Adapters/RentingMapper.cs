@@ -88,7 +88,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
         public async Task<RentingDto> UpdateRentingAsync(RentingDto rentingDto)
         {
             var renting = AdapterHelper.ConvertToEntity<RentingDto, Renting>(_mapper, rentingDto);
-            renting = await _rentingRepository.UpdateRentingAsync(renting);
+            renting = await _rentingRepository.UpdateRentingAsync(renting, renting.DateEnd);
             var rentingDtoUpdated = AdapterHelper.ConvertToDto<Renting, RentingDto>(_mapper, renting);
 
             return rentingDtoUpdated;
@@ -100,10 +100,15 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Adapters
             var rentingDto = await GetRentingByIdAsync(rentingId);
 
             var renting = AdapterHelper.ConvertToEntity<RentingCustomerVehicleDto, Renting>(_mapper, rentingDto);
-            renting = await _rentingRepository.UpdateRentingAsync(renting);
+            renting = await _rentingRepository.UpdateRentingAsync(renting, dateEnd);
             var rentingDtoUpdated = AdapterHelper.ConvertToDto<Renting, RentingCustomerVehicleDto>(_mapper, renting);
 
             return rentingDtoUpdated;
+        }
+
+        public async Task<bool> ExistsFutureRentingAsync(RentingCustomerVehicleDto renting, RentingDto dto)
+        {
+            return await _rentingRepository.ExistsFutureRentingAsync(renting, dto);
         }
 
         /// <inheritdoc/>

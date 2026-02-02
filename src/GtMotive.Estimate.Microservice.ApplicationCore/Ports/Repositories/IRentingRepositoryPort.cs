@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.Domain.Models;
 
 namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories
@@ -44,16 +46,25 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories
         /// <summary>
         /// Add Renting <see cref="Renting"/>.
         /// </summary>
-        /// <param name="renting">The unique identifier of the renting to be deleted.</param>
+        /// <param name="renting">Values.</param>
         /// <returns>Renting.</returns>
         Task<Renting> AddRentingAsync(Renting renting);
 
         /// <summary>
         /// Update Renting <see cref="Renting"/>.
         /// </summary>
-        /// <param name="renting">The unique identifier of the renting to be deleted.</param>
+        /// <param name="renting">Values.</param>
+        /// <param name="dateEnd">dateEnd.</param>
         /// <returns>Renting.</returns>
-        Task<Renting> UpdateRentingAsync(Renting renting);
+        Task<Renting> UpdateRentingAsync(Renting renting, DateTime dateEnd);
+
+        /// <summary>
+        /// Resolve problems for future rentings.
+        /// </summary>
+        /// /// <param name="renting">parameters.</param>
+        /// /// <param name="dto">dto.</param>
+        /// <returns>bool.</returns>
+        Task<bool> ExistsFutureRentingAsync(RentingCustomerVehicleDto renting, RentingDto dto);
 
         /// <summary>
         /// Delete Renting <see cref="Renting"/>.

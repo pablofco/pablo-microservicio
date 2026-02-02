@@ -35,9 +35,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Rentings
             {
                 RentingId = rentingDto.RentingId,
                 DateStart = rentingDto.DateStart,
-                DateEnd = rentingDto.DateEnd,
-                CustomerId = rentingDto.CustomerId,
-                VehicleId = rentingDto.VehicleId
+                DateEnd = rentingDto.DateEnd
             };
 
             await _vehicleMapperPort.UpdateVehiclesToNoActiveAsync();
@@ -46,6 +44,13 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Rentings
             if (rentingUpdate == null)
             {
                 return ($"This renting not exist {rentingUpdate.RentingId} not found.", null);
+            }
+
+            var hasConflict = await _rentingMapperPort.ExistsFutureRentingAsync(rentingUpdate, rentingDto);
+
+            if (hasConflict)
+            {
+                return ("The vehicle is not available for the selected return date.", null);
             }
 
             await _rentingMapperPort.UpdateRentingCloseAsync(renting.RentingId, renting.DateEnd);

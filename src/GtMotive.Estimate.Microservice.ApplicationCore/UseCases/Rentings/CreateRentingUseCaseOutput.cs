@@ -55,11 +55,12 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases.Rentings
 
                 var rentings = await _rentingMapperPort.ValidateCanRentingWithVehicleIdAsync(rentingDto.VehicleId, rentingDto.DateStart);
 
-                var result2 = rentings.Where(r => rentingDto.DateStart >= r.DateStart).ToList();
+                var result2 = rentings.Where(r => rentingDto.DateStart >= r.DateStart &&
+                                (r.DateEnd >= rentingDto.DateStart)).ToList();
 
                 if (result2.Count > 0)
                 {
-                    return ($"The vehicle is already rented and has no end date, RentingsIds:{string.Join(", ", result2.Select(r => r.RentingId).ToList())}", null);
+                    return ($"The vehicle is already rented, RentingsIds:{string.Join(", ", result2.Select(r => r.RentingId).ToList())}", null);
                 }
 
                 result2 = rentings.Where(r => rentingDto.DateStart >= r.DateStart && rentingDto.DateStart <= r.DateEnd).ToList();

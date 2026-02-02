@@ -75,7 +75,7 @@ namespace GtMotive.Estimate.Microservice.Host.Controllers
         /// <param name="rentingId">rentingId.</param>
         /// <param name="dateEnd">dateEnd.</param>
         /// <returns>NoContent.</returns>
-        [HttpPut("edit-close/rentingId/{rentingId}/dateEnd/{dateEnd}")]
+        [HttpPut("return/rentingId/{rentingId}/dateEnd/{dateEnd}")]
         public async Task<IActionResult> PutRentingClose(int rentingId, DateTime dateEnd)
         {
             try

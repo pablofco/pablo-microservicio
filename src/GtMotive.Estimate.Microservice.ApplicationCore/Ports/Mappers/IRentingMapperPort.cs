@@ -73,6 +73,14 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Ports.Mappers
         Task<RentingCustomerVehicleDto> UpdateRentingCloseAsync(int rentingId, DateTime dateEnd);
 
         /// <summary>
+        /// Check if there is another reservation in future.
+        /// </summary>
+        /// <param name="renting">CustomerRenting.</param>
+        /// <param name="dto">Dto.</param>
+        /// <returns>polivalence.</returns>
+        Task<bool> ExistsFutureRentingAsync(RentingCustomerVehicleDto renting, RentingDto dto);
+
+        /// <summary>
         /// Delete Renting <see cref="Renting"/>.
         /// </summary>
         /// <param name="rentingId">The unique identifier.</param>

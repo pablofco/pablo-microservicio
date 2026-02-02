@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GtMotive.Estimate.Microservice.ApplicationCore.Models.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Ports.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Models;
 using GtMotive.Estimate.Microservice.Infrastructure.Database;
@@ -71,16 +73,38 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
             return renting;
         }
 
-        /// <inheritdoc/>
-        public async Task<Renting> UpdateRentingAsync(Renting renting)
+        public async Task<Renting> UpdateRentingAsync(Renting renting, DateTime dateEnd)
         {
             var existingRenting = await _rentingDbContext.Rentings
                 .FirstOrDefaultAsync(c => c.RentingId == renting.RentingId);
 
             _rentingDbContext.Entry(existingRenting).CurrentValues.SetValues(renting);
 
+            // Sobrescribe la fecha con el parámetro recibido
+            existingRenting.DateEnd = dateEnd;
+
             await _rentingDbContext.SaveChangesAsync();
             return existingRenting;
+        }
+
+        public async Task<bool> ExistsFutureRentingAsync(RentingCustomerVehicleDto renting, RentingDto dto)
+        {
+            var newRentings = await GetNextRentingByVehicleAsync(renting.VehicleId);
+
+            return await _rentingDbContext.Rentings.AnyAsync(r =>
+                r.VehicleId == renting.VehicleId &&
+                r.RentingId != renting.RentingId &&
+                dto.DateEnd > newRentings.DateStart);
+        }
+
+        public async Task<Renting> GetNextRentingByVehicleAsync(int vehicleId)
+        {
+            var today = DateTime.UtcNow.Date;
+
+            return await _rentingDbContext.Rentings
+                .Where(r => r.VehicleId == vehicleId && r.DateStart >= today)
+                .OrderBy(r => r.DateStart)
+                .FirstOrDefaultAsync();
         }
 
         /// <inheritdoc/>
